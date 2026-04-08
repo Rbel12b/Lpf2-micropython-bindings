@@ -57,21 +57,21 @@ MP_DEFINE_CONST_FUN_OBJ_3);
 
 DEFINE_PORT_METHOD(start_power, (mp_obj_t self_in, mp_obj_t pw)
 {
-    GET_SELF_CPP()->startPower(mp_obj_get_int(pw));
+    GET_SELF_CPP()->startPower(mp_obj_get_uint(pw));
     return mp_const_none;
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
 
 DEFINE_PORT_METHOD(set_acc_time, (mp_obj_t self_in, mp_obj_t time, mp_obj_t profile)
 {
-    GET_SELF_CPP()->setAccTime(mp_obj_get_int(time), (Lpf2::AccelerationProfile)mp_obj_get_int(profile));
+    GET_SELF_CPP()->setAccTime(mp_obj_get_uint(time), (Lpf2::AccelerationProfile)mp_obj_get_uint(profile));
     return mp_const_none;
 },
 MP_DEFINE_CONST_FUN_OBJ_3);
 
 DEFINE_PORT_METHOD(set_dec_time, (mp_obj_t self_in, mp_obj_t time, mp_obj_t profile)
 {
-    GET_SELF_CPP()->setDecTime(mp_obj_get_int(time), (Lpf2::AccelerationProfile)mp_obj_get_int(profile));
+    GET_SELF_CPP()->setDecTime(mp_obj_get_uint(time), (Lpf2::AccelerationProfile)mp_obj_get_uint(profile));
     return mp_const_none;
 },
 MP_DEFINE_CONST_FUN_OBJ_3);
@@ -81,10 +81,10 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed,
     void *self_in = MP_OBJ_TO_PTR(args[0]);
 
     int8_t speed       = (int8_t)  mp_obj_get_int(args[1]);
-    uint8_t maxPower   = (uint8_t) mp_obj_get_int(args[2]);
+    uint8_t maxPower   = (uint8_t) mp_obj_get_uint(args[2]);
     uint8_t useProfile = 0;
     if (n_args > 3) {
-        useProfile = (uint8_t) mp_obj_get_int(args[3]);
+        useProfile = (uint8_t) mp_obj_get_uint(args[3]);
     }
     GET_SELF_CPP()->startSpeed(speed, maxPower, useProfile);
     return mp_const_none;
@@ -95,14 +95,14 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed_for_time,
 {
     void *self_in = MP_OBJ_TO_PTR(args[0]);
     
-    uint16_t time      = (uint16_t) mp_obj_get_int(args[1]);
+    uint16_t time      = (uint16_t) mp_obj_get_uint(args[1]);
     int8_t speed       = (int8_t)  mp_obj_get_int(args[2]);
-    uint8_t maxPower   = (uint8_t) mp_obj_get_int(args[3]);
-    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle) mp_obj_get_int(args[4]);
+    uint8_t maxPower   = (uint8_t) mp_obj_get_uint(args[3]);
+    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle) mp_obj_get_uint(args[4]);
 
     uint8_t useProfile = 0;
     if (n_args > 5) {
-        useProfile = (uint8_t) mp_obj_get_int(args[5]);
+        useProfile = (uint8_t) mp_obj_get_uint(args[5]);
     }
 
     GET_SELF_CPP()->startSpeedForTime(time, speed, maxPower, endState, useProfile);
@@ -114,14 +114,14 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed_for_degrees,
 {
     void *self_in = MP_OBJ_TO_PTR(args[0]);
     
-    uint16_t degrees   = (uint32_t) mp_obj_get_int(args[1]);
+    uint32_t degrees   = (uint32_t) mp_obj_get_ll(args[1]);
     int8_t speed       = (int8_t)  mp_obj_get_int(args[2]);
-    uint8_t maxPower   = (uint8_t) mp_obj_get_int(args[3]);
-    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle) mp_obj_get_int(args[4]);
+    uint8_t maxPower   = (uint8_t) mp_obj_get_uint(args[3]);
+    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle) mp_obj_get_uint(args[4]);
 
     uint8_t useProfile = 0;
     if (n_args > 5) {
-        useProfile = (uint8_t) mp_obj_get_int(args[5]);
+        useProfile = (uint8_t) mp_obj_get_uint(args[5]);
     }
 
     GET_SELF_CPP()->startSpeedForDegrees(degrees, speed, maxPower, endState, useProfile);
@@ -133,14 +133,14 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(goto_abs_pos,
 {
     void *self_in = MP_OBJ_TO_PTR(args[0]);
     
-    uint16_t absPos    = (int32_t) mp_obj_get_int(args[1]);
-    uint8_t speed      = (uint8_t) mp_obj_get_int(args[2]);
-    uint8_t maxPower   = (uint8_t) mp_obj_get_int(args[3]);
-    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle) mp_obj_get_int(args[4]);
+    int32_t absPos    = (int32_t) mp_obj_get_ll(args[1]);
+    uint8_t speed      = (uint8_t) mp_obj_get_uint(args[2]);
+    uint8_t maxPower   = (uint8_t) mp_obj_get_uint(args[3]);
+    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle) mp_obj_get_uint(args[4]);
 
     uint8_t useProfile = 0;
     if (n_args > 5) {
-        useProfile = (uint8_t) mp_obj_get_int(args[5]);
+        useProfile = (uint8_t) mp_obj_get_uint(args[5]);
     }
 
     GET_SELF_CPP()->gotoAbsPosition(absPos, speed, maxPower, endState, useProfile);
@@ -150,14 +150,14 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(goto_abs_pos,
 
 DEFINE_PORT_METHOD(preset_encoder, (mp_obj_t self_in, mp_obj_t pos)
 {
-    GET_SELF_CPP()->presetEncoder(mp_obj_get_int(pos));
+    GET_SELF_CPP()->presetEncoder(mp_obj_get_ll(pos));
     return mp_const_none;
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
 
 DEFINE_PORT_METHOD(set_rgb_color_idx, (mp_obj_t self_in, mp_obj_t idx)
 {
-    GET_SELF_CPP()->setRgbColorIdx((Lpf2::ColorIDX)mp_obj_get_int(idx));
+    GET_SELF_CPP()->setRgbColorIdx((Lpf2::ColorIDX)mp_obj_get_uint(idx));
     return mp_const_none;
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
@@ -166,9 +166,9 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(set_rgb_color,
 {
     void *self_in = MP_OBJ_TO_PTR(args[0]);
 
-    uint8_t r = (uint8_t)mp_obj_get_int(args[1]);
-    uint8_t g = (uint8_t)mp_obj_get_int(args[2]);
-    uint8_t b = (uint8_t)mp_obj_get_int(args[3]);
+    uint8_t r = (uint8_t)mp_obj_get_uint(args[1]);
+    uint8_t g = (uint8_t)mp_obj_get_uint(args[2]);
+    uint8_t b = (uint8_t)mp_obj_get_uint(args[3]);
     GET_SELF_CPP()->setRgbColor(r, g, b);
     return mp_const_none;
 },
@@ -176,14 +176,14 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(set_rgb_color,
 
 DEFINE_PORT_METHOD(set_mode, (mp_obj_t self_in, mp_obj_t mode)
 {
-    int ret = GET_SELF_CPP()->setMode(mp_obj_get_int(mode));
+    int ret = GET_SELF_CPP()->setMode(mp_obj_get_uint(mode));
     return mp_obj_new_int(ret);
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
 
 DEFINE_PORT_METHOD(set_mode_combo, (mp_obj_t self_in, mp_obj_t idx)
 {
-    int ret = GET_SELF_CPP()->setModeCombo(mp_obj_get_int(idx));
+    int ret = GET_SELF_CPP()->setModeCombo(mp_obj_get_uint(idx));
     return mp_obj_new_int(ret);
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
@@ -196,33 +196,33 @@ MP_DEFINE_CONST_FUN_OBJ_1);
 
 DEFINE_PORT_METHOD(get_value, (mp_obj_t self_in, mp_obj_t mode, mp_obj_t dataSet)
 {
-    float ret = GET_SELF_CPP()->getValue((uint8_t)mp_obj_get_int(mode), (uint8_t)mp_obj_get_int(dataSet));
+    float ret = GET_SELF_CPP()->getValue((uint8_t)mp_obj_get_uint(mode), (uint8_t)mp_obj_get_uint(dataSet));
     return mp_obj_new_float(ret);
 },
 MP_DEFINE_CONST_FUN_OBJ_3);
 
 DEFINE_PORT_METHOD(get_value_str, (mp_obj_t self_in, mp_obj_t mode)
 {
-    std::string s = GET_SELF_CPP()->getValueStr((uint8_t)mp_obj_get_int(mode));
+    std::string s = GET_SELF_CPP()->getValueStr((uint8_t)mp_obj_get_uint(mode));
     return mp_obj_new_str(s.c_str(), s.length());
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
 
 DEFINE_PORT_METHOD(get_device_type, (mp_obj_t self_in)
 {
-    return mp_obj_new_int((int)GET_SELF_CPP()->getDeviceType());
+    return mp_obj_new_int_from_uint((int)GET_SELF_CPP()->getDeviceType());
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
 DEFINE_PORT_METHOD(get_mode_count, (mp_obj_t self_in)
 {
-    return mp_obj_new_int(GET_SELF_CPP()->getModeCount());
+    return mp_obj_new_int_from_uint(GET_SELF_CPP()->getModeCount());
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
 DEFINE_PORT_METHOD(get_view_count, (mp_obj_t self_in)
 {
-    return mp_obj_new_int(GET_SELF_CPP()->getViewCount());
+    return mp_obj_new_int_from_uint(GET_SELF_CPP()->getViewCount());
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
@@ -230,7 +230,7 @@ static mp_obj_t lpf2_port_get_mode(mp_obj_t self_in, mp_obj_t num)
 {
     auto self = GET_SELF_CPP();
     auto& modes = self->getModes();
-    uint8_t modeNum = mp_obj_get_int(num);
+    uint8_t modeNum = mp_obj_get_uint(num);
     if (modeNum >= modes.size())
     {
         return mp_const_none;
@@ -245,31 +245,31 @@ MP_DEFINE_CONST_FUN_OBJ_2(lpf2_port_get_mode_obj, lpf2_port_get_mode);
 
 DEFINE_PORT_METHOD(get_mode_combo_count, (mp_obj_t self_in)
 {
-    return mp_obj_new_int(GET_SELF_CPP()->getModeComboCount());
+    return mp_obj_new_int_from_uint(GET_SELF_CPP()->getModeComboCount());
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
 DEFINE_PORT_METHOD(get_mode_combo, (mp_obj_t self_in, mp_obj_t combo)
 {
-    return mp_obj_new_int(GET_SELF_CPP()->getModeCombo((uint8_t)mp_obj_get_int(combo)));
+    return mp_obj_new_int_from_uint(GET_SELF_CPP()->getModeCombo((uint8_t)mp_obj_get_uint(combo)));
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
 
 DEFINE_PORT_METHOD(get_input_modes, (mp_obj_t self_in)
 {
-    return mp_obj_new_int(GET_SELF_CPP()->getInputModes());
+    return mp_obj_new_int_from_uint(GET_SELF_CPP()->getInputModes());
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
 DEFINE_PORT_METHOD(get_output_modes, (mp_obj_t self_in)
 {
-    return mp_obj_new_int(GET_SELF_CPP()->getOutputModes());
+    return mp_obj_new_int_from_uint(GET_SELF_CPP()->getOutputModes());
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
 DEFINE_PORT_METHOD(get_capabilities, (mp_obj_t self_in)
 {
-    return mp_obj_new_int(GET_SELF_CPP()->getCapabilities());
+    return mp_obj_new_int_from_uint(GET_SELF_CPP()->getCapabilities());
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
@@ -282,13 +282,13 @@ MP_DEFINE_CONST_FUN_OBJ_1);
 
 DEFINE_PORT_METHOD(speed_to_raw, (mp_obj_t self_in, mp_obj_t speed)
 {
-    return mp_obj_new_int((int)Lpf2::Port::speedToRaw((int8_t)mp_obj_get_int(speed)));
+    return mp_obj_new_int_from_uint((int)Lpf2::Port::speedToRaw((int8_t)mp_obj_get_int(speed)));
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
 
 DEFINE_PORT_METHOD(raw_to_speed, (mp_obj_t self_in, mp_obj_t raw)
 {
-    return mp_obj_new_int((int)Lpf2::Port::rawToSpeed((uint8_t)mp_obj_get_int(raw)));
+    return mp_obj_new_int((int)Lpf2::Port::rawToSpeed((uint8_t)mp_obj_get_uint(raw)));
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
 
