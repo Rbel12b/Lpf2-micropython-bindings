@@ -93,10 +93,20 @@ extern const mp_obj_type_t lpf2_mode_type;
 typedef struct _mp_obj_lpf2_version_t
 {
     mp_obj_base_t base;
-    Lpf2::Version*cpp_obj = nullptr;
+    Lpf2::Version *cpp_obj = nullptr;
     bool owned = false; // if true cpp_obj is owned by the mp obj
 } mp_obj_lpf2_version_t;
 extern const mp_obj_type_t lpf2_version_type;
+
+typedef struct _mp_obj_lpf2_device_descriptor_t
+{
+    mp_obj_base_t base;
+    Lpf2::DeviceDescriptor *cpp_obj = nullptr;
+    bool owned = false; // if true cpp_obj is owned by the mp obj
+    mp_obj_t combo_list;
+    mp_obj_t mode_list;
+} mp_obj_lpf2_device_descriptor_t;
+extern const mp_obj_type_t lpf2_device_descriptor_type;
 
 typedef struct _mp_obj_lpf2_hub_emulation_t
 {

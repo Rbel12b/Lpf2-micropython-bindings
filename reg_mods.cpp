@@ -27,6 +27,7 @@ LPF2_DEFINE_MOD_WITH_GLOB_ATTR_USED(lpf2,
     LPF2_GET_LPF2_TYPE_REG(mode),
     LPF2_GET_LPF2_TYPE_REG(version),
     LPF2_GET_LPF2_TYPE_REG(hub_emulation),
+    LPF2_GET_LPF2_TYPE_REG(device_descriptor),
 );
 
 MP_REGISTER_MODULE(MP_QSTR_lpf2, LPF2_GET_MOD(lpf2));

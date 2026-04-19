@@ -1,5 +1,6 @@
 extern "C" {
 #include "py/runtime.h"
+#include "py/binary.h"
 }
 
 #define LOAD_STORE_VAL(val, type) \
@@ -211,5 +212,112 @@ MP_DEFINE_CONST_OBJ_TYPE(
     make_new, (void*)lpf2_version_make_new,
     attr, (void*)lpf2_version_attr,
     locals_dict, &lpf2_version_locals_dict
+);
+
+#undef SELF_TYPE
+#define SELF_TYPE mp_obj_lpf2_device_descriptor_t
+
+static mp_obj_t lpf2_device_descriptor_make_new(const mp_obj_type_t *type,
+                                    size_t n_args,
+                                    size_t n_kw,
+                                    const mp_obj_t *args)
+{
+
+    SELF_TYPE *o = (SELF_TYPE*)m_malloc_with_finaliser(sizeof(SELF_TYPE));
+    o->base.type = type;
+
+    o->cpp_obj = new Lpf2::DeviceDescriptor;
+    o->owned = true;
+
+    return MP_OBJ_FROM_PTR(o);
+}
+
+static void lpf2_device_descriptor_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest) {
+    auto self = GET_SELF_CPP();
+    auto self_c = GET_SELF();
+
+    switch (attr)
+    {
+    CASE_VAL_NAME_2(inModesMask, uint, int_from_uint);
+    CASE_VAL_NAME_2(outModesMask, uint, int_from_uint);
+    CASE_VAL_NAME_2(caps, uint, int_from_uint);
+    case MP_QSTR_type:
+    {
+        if (dest[0] == MP_OBJ_NULL) {
+            dest[0] = mp_obj_new_int_from_uint((uint8_t)self->type);
+        } else {
+            self->type = (Lpf2::DeviceType)mp_obj_get_uint(dest[1]);
+            dest[0] = MP_OBJ_NULL;
+        }
+        break;
+    }
+    case MP_QSTR_combos:
+    {
+        if (dest[0] == MP_OBJ_NULL) {
+            if (!self_c->combo_list)
+            {
+                mp_obj_list_t *list = (mp_obj_list_t*)mp_obj_new_list(self->combos.size(), NULL);
+
+                for (size_t i = 0; i < self->combos.size(); ++i) {
+                    list->items[i] = mp_obj_new_int(self->combos[i]);
+                }
+                self_c->combo_list = MP_OBJ_FROM_PTR(list);
+            }
+            dest[0] = self_c->combo_list;
+        } else {
+            mp_obj_t *items;
+            size_t len;
+
+            mp_obj_get_array(dest[1], &len, &items);
+
+            std::vector<uint16_t> vec;
+            vec.reserve(len);
+
+            for (size_t i = 0; i < len; ++i) {
+                vec.push_back((uint16_t)mp_obj_get_int(items[i]));
+            }
+            self->combos = vec;
+            dest[0] = MP_OBJ_NULL;
+            mp_obj_list_t *list = (mp_obj_list_t*)mp_obj_new_list(self->combos.size(), NULL);
+
+            for (size_t i = 0; i < self->combos.size(); ++i) {
+                list->items[i] = mp_obj_new_int(self->combos[i]);
+            }
+            self_c->combo_list = MP_OBJ_FROM_PTR(list);
+        }
+        break;
+    }
+    default:
+        dest[1] = MP_OBJ_SENTINEL;
+        break;
+    }
+}
+
+LPF2_DEFINE_METHOD(device_descriptor_del, (mp_obj_t self_in)
+{
+    auto self = GET_SELF();
+    LPF2_LOG_V("Deleting DeviceDesc, owner: %s", self->owned ? "true" : "false");
+    if (self->owned && self->cpp_obj)
+    {
+        delete self->cpp_obj;
+        self->cpp_obj = nullptr;
+    }
+    return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
+static const mp_rom_map_elem_t lpf2_device_descriptor_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&LPF2_GET_METHOD_OBJ(device_descriptor_del))},
+};
+
+static MP_DEFINE_CONST_DICT(lpf2_device_descriptor_locals_dict, lpf2_device_descriptor_locals_table);
+
+MP_DEFINE_CONST_OBJ_TYPE(
+    lpf2_device_descriptor_type, 
+    MP_QSTR_device_descriptor,
+    MP_TYPE_FLAG_NONE,
+    make_new, (void*)lpf2_device_descriptor_make_new,
+    attr, (void*)lpf2_device_descriptor_attr,
+    locals_dict, &lpf2_device_descriptor_locals_dict
 );
 }
