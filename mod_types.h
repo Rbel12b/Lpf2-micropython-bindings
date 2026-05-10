@@ -29,6 +29,13 @@ static inline mp_obj_t lpf2_cast_to_native_base(mp_obj_t obj, const mp_obj_type_
 #include "Lpf2/Virtual/Port.hpp"
 #include "Lpf2/Virtual/Device.hpp"
 #include "Lpf2/HubEmulation.hpp"
+#include "Lpf2/DeviceManager.hpp"
+#include "Lpf2/Devices/BasicMotor.hpp"
+#include "Lpf2/Devices/EncoderMotor.hpp"
+#include "Lpf2/Devices/ColorSensor.hpp"
+#include "Lpf2/Devices/DistanceSensor.hpp"
+#include "Lpf2/PortExpander/Device.hpp"
+#include "Lpf2/PortExpander/VirtualDevice.hpp"
 
 #define LPF2_DEFINE_METHOD(name, method, fun_obj_def) \
     static mp_obj_t lpf2_##name method \
@@ -89,6 +96,7 @@ typedef struct _mp_obj_lpf2_port_t
     Lpf2::Port *cpp_obj = nullptr;
     bool owned = false; // if true cpp_obj is owned by the mp obj
     bool is_trampoline = false;
+    mp_obj_t parent_ref; // lifetime anchor for non-owning wrappers (e.g. port_expander_dev)
 } mp_obj_lpf2_port_t;
 extern const mp_obj_type_t lpf2_port_type;
 extern const mp_obj_type_t lpf2_local_port_type;
@@ -147,6 +155,37 @@ typedef struct _mp_obj_lpf2_hub_emulation_t
     bool owned = false; // if true cpp_obj is owned by the mp obj
 } mp_obj_lpf2_hub_emulation_t;
 extern const mp_obj_type_t lpf2_hub_emulation_type;
+
+typedef struct _mp_obj_lpf2_device_manager_t
+{
+    mp_obj_base_t base;
+    Lpf2::DeviceManager *cpp_obj = nullptr;
+    bool owned = false;
+    mp_obj_t port_ref;
+} mp_obj_lpf2_device_manager_t;
+extern const mp_obj_type_t lpf2_device_manager_type;
+
+typedef struct { mp_obj_base_t base; Lpf2::Devices::BasicMotor *cpp_obj; mp_obj_t manager_ref; } mp_obj_lpf2_basic_motor_t;
+typedef struct { mp_obj_base_t base; Lpf2::Devices::EncoderMotor *cpp_obj; mp_obj_t manager_ref; } mp_obj_lpf2_encoder_motor_t;
+typedef struct { mp_obj_base_t base; Lpf2::Devices::TechnicColorSensor *cpp_obj; mp_obj_t manager_ref; } mp_obj_lpf2_color_sensor_t;
+typedef struct { mp_obj_base_t base; Lpf2::Devices::TechnicDistanceSensor *cpp_obj; mp_obj_t manager_ref; } mp_obj_lpf2_distance_sensor_t;
+typedef struct { mp_obj_base_t base; Lpf2::Devices::PortExpander *cpp_obj; mp_obj_t manager_ref; } mp_obj_lpf2_port_expander_dev_t;
+extern const mp_obj_type_t lpf2_basic_motor_type;
+extern const mp_obj_type_t lpf2_encoder_motor_type;
+extern const mp_obj_type_t lpf2_color_sensor_type;
+extern const mp_obj_type_t lpf2_distance_sensor_type;
+extern const mp_obj_type_t lpf2_port_expander_type;
+
+typedef struct _mp_obj_lpf2_virtual_port_expander_device_t
+{
+    mp_obj_base_t base;
+    Lpf2::Virtual::PortExpanderDevice *cpp_obj = nullptr;
+    bool owned = false;
+    mp_obj_t port_refs[4]; // indexed by PortExpander::PortNum (A=0..D=3)
+} mp_obj_lpf2_virtual_port_expander_device_t;
+extern const mp_obj_type_t lpf2_virtual_port_expander_device_type;
+
+extern const mp_obj_fun_builtin_fixed_t lpf2_devices_register_default_obj;
 
 LPF2_MOD_EXTERN(color);
 LPF2_MOD_EXTERN(hub_type);

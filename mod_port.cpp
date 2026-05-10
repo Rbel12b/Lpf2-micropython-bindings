@@ -20,6 +20,7 @@ static mp_obj_t lpf2_port_make_new(const mp_obj_type_t *type,
     o->cpp_obj = new PortTrampoline(MP_OBJ_FROM_PTR(o));
     o->is_trampoline = true;
     o->owned = true;
+    o->parent_ref = MP_OBJ_NULL;
 
     return MP_OBJ_FROM_PTR(o);
 }
