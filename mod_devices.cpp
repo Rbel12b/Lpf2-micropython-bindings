@@ -79,12 +79,12 @@ static MP_DEFINE_CONST_FUN_OBJ_3(lpf2_encoder_motor_set_dec_time_obj, lpf2_encod
 static mp_obj_t lpf2_encoder_motor_start_speed(size_t n_args, const mp_obj_t *args)
 {
     int8_t  speed      = (int8_t) mp_obj_get_int(args[1]);
-    uint8_t maxPower   = (uint8_t)mp_obj_get_uint(args[2]);
+    uint8_t maxPower   = n_args > 2 ? (uint8_t)mp_obj_get_uint(args[2]) : 100;
     uint8_t useProfile = n_args > 3 ? (uint8_t)mp_obj_get_uint(args[3]) : 0;
     GET_EM_CPP(args[0])->startSpeed(speed, maxPower, useProfile);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_encoder_motor_start_speed_obj, 3, 4, lpf2_encoder_motor_start_speed);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_encoder_motor_start_speed_obj, 2, 4, lpf2_encoder_motor_start_speed);
 
 static mp_obj_t lpf2_encoder_motor_start_speed_for_time(size_t n_args, const mp_obj_t *args)
 {
