@@ -9,7 +9,8 @@ LPF2_DEFINE_MOD_WITH_GLOB(local,
 
 /* --- lpf2.virtual --- */
 LPF2_DEFINE_MOD_WITH_GLOB(virtual,
-    { MP_ROM_QSTR(MP_QSTR_port), MP_ROM_PTR(&lpf2_virtual_port_type) }
+    { MP_ROM_QSTR(MP_QSTR_port),   MP_ROM_PTR(&lpf2_virtual_port_type) },
+    { MP_ROM_QSTR(MP_QSTR_device), MP_ROM_PTR(&lpf2_virtual_device_type) }
 );
 
 /* --- lpf2 --- */

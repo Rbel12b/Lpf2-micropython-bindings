@@ -9,6 +9,7 @@ extern "C" {
 #include "Lpf2/Local/Port.hpp"
 #include "Lpf2/LWPConst.hpp"
 #include "Lpf2/Virtual/Port.hpp"
+#include "Lpf2/Virtual/Device.hpp"
 #include "Lpf2/HubEmulation.hpp"
 
 #define LPF2_DEFINE_METHOD(name, method, fun_obj_def) \
@@ -80,6 +81,7 @@ typedef struct _mp_obj_lpf2_virtual_port_t
     Lpf2::Virtual::Port *cpp_obj = nullptr;
     bool owned = false; // if true cpp_obj is owned by the mp obj
     bool is_trampoline = false;
+    mp_obj_t device_ref; // keeps attached virtual device alive for GC
 } mp_obj_lpf2_virtual_port_t;
 extern const mp_obj_type_t lpf2_virtual_port_type;
 
@@ -105,8 +107,20 @@ typedef struct _mp_obj_lpf2_device_descriptor_t
     bool owned = false; // if true cpp_obj is owned by the mp obj
     mp_obj_t combo_list;
     mp_obj_t mode_list;
+    mp_obj_t fw_version_ref;
+    mp_obj_t hw_version_ref;
 } mp_obj_lpf2_device_descriptor_t;
 extern const mp_obj_type_t lpf2_device_descriptor_type;
+
+typedef struct _mp_obj_lpf2_virtual_device_t
+{
+    mp_obj_base_t base;
+    Lpf2::Virtual::Device *cpp_obj = nullptr;
+    bool owned = false; // if true cpp_obj is owned by the mp obj
+    mp_obj_t descriptor_ref; // keeps DeviceDescriptor alive (GenericDevice holds a reference)
+    mp_obj_t write_data_cb;  // optional Python writeData callback
+} mp_obj_lpf2_virtual_device_t;
+extern const mp_obj_type_t lpf2_virtual_device_type;
 
 typedef struct _mp_obj_lpf2_hub_emulation_t
 {

@@ -287,6 +287,75 @@ static void lpf2_device_descriptor_attr(mp_obj_t self_in, qstr attr, mp_obj_t *d
         }
         break;
     }
+    case MP_QSTR_fwVersion:
+    {
+        if (dest[0] == MP_OBJ_NULL) {
+            mp_obj_lpf2_version_t *v = (mp_obj_lpf2_version_t*)m_malloc_with_finaliser(sizeof(mp_obj_lpf2_version_t));
+            v->base.type = &lpf2_version_type;
+            v->cpp_obj = new Lpf2::Version(self->fwVersion);
+            v->owned = true;
+            dest[0] = MP_OBJ_FROM_PTR(v);
+        } else {
+            if (mp_obj_is_type(dest[1], &lpf2_version_type)) {
+                mp_obj_lpf2_version_t *v = (mp_obj_lpf2_version_t*)MP_OBJ_TO_PTR(dest[1]);
+                self->fwVersion = *v->cpp_obj;
+            }
+            dest[0] = MP_OBJ_NULL;
+        }
+        break;
+    }
+    case MP_QSTR_hwVersion:
+    {
+        if (dest[0] == MP_OBJ_NULL) {
+            mp_obj_lpf2_version_t *v = (mp_obj_lpf2_version_t*)m_malloc_with_finaliser(sizeof(mp_obj_lpf2_version_t));
+            v->base.type = &lpf2_version_type;
+            v->cpp_obj = new Lpf2::Version(self->hwVersion);
+            v->owned = true;
+            dest[0] = MP_OBJ_FROM_PTR(v);
+        } else {
+            if (mp_obj_is_type(dest[1], &lpf2_version_type)) {
+                mp_obj_lpf2_version_t *v = (mp_obj_lpf2_version_t*)MP_OBJ_TO_PTR(dest[1]);
+                self->hwVersion = *v->cpp_obj;
+            }
+            dest[0] = MP_OBJ_NULL;
+        }
+        break;
+    }
+    case MP_QSTR_modes:
+    {
+        if (dest[0] == MP_OBJ_NULL) {
+            if (!self_c->mode_list) {
+                mp_obj_list_t *list = (mp_obj_list_t*)mp_obj_new_list(self->modes.size(), NULL);
+                for (size_t i = 0; i < self->modes.size(); ++i) {
+                    mp_obj_lpf2_mode_t *m = (mp_obj_lpf2_mode_t*)m_malloc_with_finaliser(sizeof(mp_obj_lpf2_mode_t));
+                    m->base.type = &lpf2_mode_type;
+                    m->cpp_obj = new Lpf2::Mode(self->modes[i]);
+                    m->owned = true;
+                    list->items[i] = MP_OBJ_FROM_PTR(m);
+                }
+                self_c->mode_list = MP_OBJ_FROM_PTR(list);
+            }
+            dest[0] = self_c->mode_list;
+        } else {
+            mp_obj_t *items;
+            size_t len;
+            mp_obj_get_array(dest[1], &len, &items);
+
+            std::vector<Lpf2::Mode> modes;
+            modes.reserve(len);
+            for (size_t i = 0; i < len; ++i) {
+                if (!mp_obj_is_type(items[i], &lpf2_mode_type)) {
+                    mp_raise_TypeError(MP_ERROR_TEXT("modes list must contain mode objects"));
+                }
+                mp_obj_lpf2_mode_t *m = (mp_obj_lpf2_mode_t*)MP_OBJ_TO_PTR(items[i]);
+                modes.push_back(*m->cpp_obj);
+            }
+            self->modes = modes;
+            self_c->mode_list = MP_OBJ_NULL;
+            dest[0] = MP_OBJ_NULL;
+        }
+        break;
+    }
     default:
         dest[1] = MP_OBJ_SENTINEL;
         break;

@@ -19,6 +19,7 @@ static mp_obj_t lpf2_virtual_port_make_new(const mp_obj_type_t *type,
 
     o->cpp_obj = new Lpf2::Virtual::Port();
     o->owned = true;
+    o->device_ref = MP_OBJ_NULL;
 
     return MP_OBJ_FROM_PTR(o);
 }
@@ -36,8 +37,33 @@ DEFINE_VPORT_METHOD(del, (mp_obj_t self_in)
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
+DEFINE_VPORT_METHOD(attach_device, (mp_obj_t self_in, mp_obj_t device_in)
+{
+    auto self = GET_SELF();
+    if (!mp_obj_is_type(device_in, &lpf2_virtual_device_type))
+    {
+        mp_raise_TypeError(MP_ERROR_TEXT("expected virtual_device"));
+    }
+    mp_obj_lpf2_virtual_device_t *device = (mp_obj_lpf2_virtual_device_t *)MP_OBJ_TO_PTR(device_in);
+    self->cpp_obj->attachDevice(device->cpp_obj);
+    self->device_ref = device_in;
+    return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_2);
+
+DEFINE_VPORT_METHOD(detach_device, (mp_obj_t self_in)
+{
+    auto self = GET_SELF();
+    self->cpp_obj->detachDevice();
+    self->device_ref = MP_OBJ_NULL;
+    return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
 static const mp_rom_map_elem_t lpf2_virtual_port_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&GET_VPORT_METHOD_OBJ(del))},
+    {MP_ROM_QSTR(MP_QSTR_attachDevice), MP_ROM_PTR(&GET_VPORT_METHOD_OBJ(attach_device))},
+    {MP_ROM_QSTR(MP_QSTR_detachDevice), MP_ROM_PTR(&GET_VPORT_METHOD_OBJ(detach_device))},
     {MP_ROM_QSTR(MP_QSTR_update), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(update))},
     {MP_ROM_QSTR(MP_QSTR_writeData), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(write_data))},
     {MP_ROM_QSTR(MP_QSTR_startPower), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(start_power))},
