@@ -1,9 +1,10 @@
 add_library(lpf2_mod INTERFACE)
 
 set(LPF2_DIR ${CMAKE_CURRENT_LIST_DIR}/../../lib/Lpf2)
+set(LPF2_EXT_DIR ${CMAKE_CURRENT_LIST_DIR}/../../lib/Lpf2-ext)
 
 # Add source files to the library.
-file(GLOB_RECURSE LPF2_SOURCES "${LPF2_DIR}/src/Lpf2/*.cpp")
+file(GLOB_RECURSE LPF2_SOURCES "${LPF2_DIR}/src/Lpf2/*.cpp" "${LPF2_EXT_DIR}/src/Lpf2/*.cpp")
 file(GLOB_RECURSE LPF2_MOD_SOURCES_CXX "${CMAKE_CURRENT_LIST_DIR}/*.cpp")
 file(GLOB_RECURSE LPF2_MOD_SOURCES_C "${CMAKE_CURRENT_LIST_DIR}/*.c")
 
@@ -18,6 +19,8 @@ target_include_directories(lpf2_mod INTERFACE
     ${CMAKE_CURRENT_LIST_DIR}
     ${LPF2_DIR}/include
     ${LPF2_DIR}/src
+    ${LPF2_EXT_DIR}/include
+    ${LPF2_EXT_DIR}/src
 )
 
 target_compile_features(lpf2_mod INTERFACE cxx_std_20)
