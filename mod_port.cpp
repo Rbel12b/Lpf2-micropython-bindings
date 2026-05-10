@@ -57,7 +57,7 @@ MP_DEFINE_CONST_FUN_OBJ_3);
 
 DEFINE_PORT_METHOD(start_power, (mp_obj_t self_in, mp_obj_t pw)
 {
-    GET_SELF_CPP()->startPower(mp_obj_get_uint(pw));
+    GET_SELF_CPP()->startPower(mp_obj_get_int_truncated(pw));
     return mp_const_none;
 },
 MP_DEFINE_CONST_FUN_OBJ_2);
