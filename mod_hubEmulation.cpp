@@ -69,13 +69,11 @@ MP_DEFINE_CONST_FUN_OBJ_2);
 
 DEFINE_HUB_EMU_METHOD(set_fw_version, (mp_obj_t self_in, mp_obj_t version)
 {
-    if (!mp_obj_is_type(version, &lpf2_version_type) &&
-        !mp_obj_is_subclass_fast(
-            MP_OBJ_FROM_PTR(mp_obj_get_type(version)),
-            MP_OBJ_FROM_PTR(&lpf2_version_type))) {
+    mp_obj_t native = lpf2_cast_to_native_base(version, &lpf2_version_type);
+    if (native == MP_OBJ_NULL) {
         mp_raise_TypeError(MP_ERROR_TEXT("expected lpf2.version"));
     }
-    mp_obj_lpf2_version_t *version_obj = (mp_obj_lpf2_version_t*)MP_OBJ_TO_PTR(version);
+    mp_obj_lpf2_version_t *version_obj = (mp_obj_lpf2_version_t *)MP_OBJ_TO_PTR(native);
     GET_SELF_CPP()->setFirmwareVersion(*version_obj->cpp_obj);
     return mp_const_none;
 },
@@ -83,13 +81,11 @@ MP_DEFINE_CONST_FUN_OBJ_2);
 
 DEFINE_HUB_EMU_METHOD(set_hw_version, (mp_obj_t self_in, mp_obj_t version)
 {
-    if (!mp_obj_is_type(version, &lpf2_version_type) &&
-        !mp_obj_is_subclass_fast(
-            MP_OBJ_FROM_PTR(mp_obj_get_type(version)),
-            MP_OBJ_FROM_PTR(&lpf2_version_type))) {
+    mp_obj_t native = lpf2_cast_to_native_base(version, &lpf2_version_type);
+    if (native == MP_OBJ_NULL) {
         mp_raise_TypeError(MP_ERROR_TEXT("expected lpf2.version"));
     }
-    mp_obj_lpf2_version_t *version_obj = (mp_obj_lpf2_version_t*)MP_OBJ_TO_PTR(version);
+    mp_obj_lpf2_version_t *version_obj = (mp_obj_lpf2_version_t *)MP_OBJ_TO_PTR(native);
     GET_SELF_CPP()->setHardwareVersion(*version_obj->cpp_obj);
     return mp_const_none;
 },
@@ -118,13 +114,12 @@ MP_DEFINE_CONST_FUN_OBJ_1);
 
 DEFINE_HUB_EMU_METHOD(attach_port, (mp_obj_t self_in, mp_obj_t port_num, mp_obj_t port)
 {
-    if (!mp_obj_is_type(port, &lpf2_port_type) &&
-        !mp_obj_is_subclass_fast(
-            MP_OBJ_FROM_PTR(mp_obj_get_type(port)),
-            MP_OBJ_FROM_PTR(&lpf2_port_type))) {
+    mp_obj_t native_port = lpf2_cast_to_native_base(port, &lpf2_virtual_port_type);
+    if (native_port == MP_OBJ_NULL)
+        native_port = lpf2_cast_to_native_base(port, &lpf2_port_type);
+    if (native_port == MP_OBJ_NULL)
         mp_raise_TypeError(MP_ERROR_TEXT("expected lpf2.port"));
-    }
-    mp_obj_lpf2_port_t *port_obj = (mp_obj_lpf2_port_t*)MP_OBJ_TO_PTR(port);
+    mp_obj_lpf2_port_t *port_obj = (mp_obj_lpf2_port_t *)MP_OBJ_TO_PTR(native_port);
     GET_SELF_CPP()->attachPort(mp_obj_get_uint(port_num), port_obj->cpp_obj);
     return mp_const_none;
 },

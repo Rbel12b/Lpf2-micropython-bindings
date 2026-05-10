@@ -40,11 +40,11 @@ MP_DEFINE_CONST_FUN_OBJ_1);
 DEFINE_VPORT_METHOD(attach_device, (mp_obj_t self_in, mp_obj_t device_in)
 {
     auto self = GET_SELF();
-    if (!mp_obj_is_type(device_in, &lpf2_virtual_device_type))
-    {
+    mp_obj_t native_device = lpf2_cast_to_native_base(device_in, &lpf2_virtual_device_type);
+    if (native_device == MP_OBJ_NULL) {
         mp_raise_TypeError(MP_ERROR_TEXT("expected virtual_device"));
     }
-    mp_obj_lpf2_virtual_device_t *device = (mp_obj_lpf2_virtual_device_t *)MP_OBJ_TO_PTR(device_in);
+    mp_obj_lpf2_virtual_device_t *device = (mp_obj_lpf2_virtual_device_t *)MP_OBJ_TO_PTR(native_device);
     self->cpp_obj->attachDevice(device->cpp_obj);
     self->device_ref = device_in;
     return mp_const_none;
@@ -102,6 +102,7 @@ MP_DEFINE_CONST_OBJ_TYPE(
     MP_QSTR_virtual_port,
     MP_TYPE_FLAG_NONE,
     make_new, (void*)lpf2_virtual_port_make_new,
+    parent, &lpf2_port_type,
     locals_dict, &lpf2_virtual_port_locals_dict
 );
 }

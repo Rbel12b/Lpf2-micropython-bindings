@@ -21,7 +21,9 @@ static mp_obj_t lpf2_virtual_device_make_new(const mp_obj_type_t *type,
 {
     mp_arg_check_num(n_args, n_kw, 1, 1, false);
 
-    if (!mp_obj_is_type(args[0], &lpf2_device_descriptor_type))
+    if (!mp_obj_is_subclass_fast(
+            MP_OBJ_FROM_PTR(mp_obj_get_type(args[0])),
+            MP_OBJ_FROM_PTR(&lpf2_device_descriptor_type)))
     {
         mp_raise_TypeError(MP_ERROR_TEXT("expected device_descriptor"));
     }

@@ -1,9 +1,27 @@
 extern "C" {
 #include "py/runtime.h"
+#include "py/objtype.h"
 }
 
 #define GET_SELF() ((SELF_TYPE*)(MP_OBJ_TO_PTR(self_in)))
 #define GET_SELF_CPP() (GET_SELF()->cpp_obj)
+
+// Walk the instance-type tree to extract the native base of native_type.
+// Handles multi-level Python subclassing (class C(B(A(native_type)))).
+// Returns the native base object, or MP_OBJ_NULL if incompatible type.
+static inline mp_obj_t lpf2_cast_to_native_base(mp_obj_t obj, const mp_obj_type_t *native_type)
+{
+    while (true) {
+        if (mp_obj_is_type(obj, native_type)) {
+            return obj;
+        }
+        const mp_obj_type_t *type = mp_obj_get_type(obj);
+        if (!mp_obj_is_instance_type(type)) {
+            return MP_OBJ_NULL;
+        }
+        obj = ((mp_obj_instance_t *)MP_OBJ_TO_PTR(obj))->subobj[0];
+    }
+}
 
 #include "Lpf2/Port.hpp"
 #include "Lpf2/Local/Port.hpp"
