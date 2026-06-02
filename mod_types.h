@@ -153,6 +153,7 @@ typedef struct _mp_obj_lpf2_hub_emulation_t
     mp_obj_base_t base;
     Lpf2::HubEmulation *cpp_obj = nullptr;
     bool owned = false; // if true cpp_obj is owned by the mp obj
+    mp_obj_t attached_ports; // Python list keeping attached port objects alive for GC
 } mp_obj_lpf2_hub_emulation_t;
 extern const mp_obj_type_t lpf2_hub_emulation_type;
 

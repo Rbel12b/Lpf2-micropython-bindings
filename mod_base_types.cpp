@@ -296,10 +296,10 @@ static void lpf2_device_descriptor_attr(mp_obj_t self_in, qstr attr, mp_obj_t *d
             v->owned = true;
             dest[0] = MP_OBJ_FROM_PTR(v);
         } else {
-            if (mp_obj_is_type(dest[1], &lpf2_version_type)) {
-                mp_obj_lpf2_version_t *v = (mp_obj_lpf2_version_t*)MP_OBJ_TO_PTR(dest[1]);
-                self->fwVersion = *v->cpp_obj;
-            }
+            mp_obj_t native_v = lpf2_cast_to_native_base(dest[1], &lpf2_version_type);
+            if (native_v == MP_OBJ_NULL)
+                mp_raise_TypeError(MP_ERROR_TEXT("expected version"));
+            self->fwVersion = *((mp_obj_lpf2_version_t*)MP_OBJ_TO_PTR(native_v))->cpp_obj;
             dest[0] = MP_OBJ_NULL;
         }
         break;
@@ -313,10 +313,10 @@ static void lpf2_device_descriptor_attr(mp_obj_t self_in, qstr attr, mp_obj_t *d
             v->owned = true;
             dest[0] = MP_OBJ_FROM_PTR(v);
         } else {
-            if (mp_obj_is_type(dest[1], &lpf2_version_type)) {
-                mp_obj_lpf2_version_t *v = (mp_obj_lpf2_version_t*)MP_OBJ_TO_PTR(dest[1]);
-                self->hwVersion = *v->cpp_obj;
-            }
+            mp_obj_t native_v = lpf2_cast_to_native_base(dest[1], &lpf2_version_type);
+            if (native_v == MP_OBJ_NULL)
+                mp_raise_TypeError(MP_ERROR_TEXT("expected version"));
+            self->hwVersion = *((mp_obj_lpf2_version_t*)MP_OBJ_TO_PTR(native_v))->cpp_obj;
             dest[0] = MP_OBJ_NULL;
         }
         break;
@@ -344,11 +344,10 @@ static void lpf2_device_descriptor_attr(mp_obj_t self_in, qstr attr, mp_obj_t *d
             std::vector<Lpf2::Mode> modes;
             modes.reserve(len);
             for (size_t i = 0; i < len; ++i) {
-                if (!mp_obj_is_type(items[i], &lpf2_mode_type)) {
+                mp_obj_t native_m = lpf2_cast_to_native_base(items[i], &lpf2_mode_type);
+                if (native_m == MP_OBJ_NULL)
                     mp_raise_TypeError(MP_ERROR_TEXT("modes list must contain mode objects"));
-                }
-                mp_obj_lpf2_mode_t *m = (mp_obj_lpf2_mode_t*)MP_OBJ_TO_PTR(items[i]);
-                modes.push_back(*m->cpp_obj);
+                modes.push_back(*((mp_obj_lpf2_mode_t*)MP_OBJ_TO_PTR(native_m))->cpp_obj);
             }
             self->modes = modes;
             self_c->mode_list = MP_OBJ_NULL;

@@ -66,7 +66,7 @@ public:
     {
         mp_obj_t method = mp_load_attr(self, MP_QSTR_startSpeedForDegrees);
         mp_obj_t args[5] = {
-            mp_obj_new_int(degrees),
+            mp_obj_new_int_from_uint(degrees),
             mp_obj_new_int(speed),
             mp_obj_new_int(maxPower),
             mp_obj_new_int((uint8_t)endState),

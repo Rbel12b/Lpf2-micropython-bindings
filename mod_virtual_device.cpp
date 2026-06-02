@@ -21,14 +21,12 @@ static mp_obj_t lpf2_virtual_device_make_new(const mp_obj_type_t *type,
 {
     mp_arg_check_num(n_args, n_kw, 1, 1, false);
 
-    if (!mp_obj_is_subclass_fast(
-            MP_OBJ_FROM_PTR(mp_obj_get_type(args[0])),
-            MP_OBJ_FROM_PTR(&lpf2_device_descriptor_type)))
-    {
+    mp_obj_t native_desc = lpf2_cast_to_native_base(args[0], &lpf2_device_descriptor_type);
+    if (native_desc == MP_OBJ_NULL) {
         mp_raise_TypeError(MP_ERROR_TEXT("expected device_descriptor"));
     }
 
-    mp_obj_lpf2_device_descriptor_t *desc = (mp_obj_lpf2_device_descriptor_t *)MP_OBJ_TO_PTR(args[0]);
+    mp_obj_lpf2_device_descriptor_t *desc = (mp_obj_lpf2_device_descriptor_t *)MP_OBJ_TO_PTR(native_desc);
 
     SELF_TYPE *o = (SELF_TYPE *)m_malloc_with_finaliser(sizeof(SELF_TYPE));
     o->base.type = type;
@@ -134,49 +132,40 @@ DEFINE_VDEV_METHOD_VAR_BETWEEN(start_speed_for_time,
 {
     uint16_t time      = (uint16_t) mp_obj_get_uint(args[1]);
     int8_t speed       = (int8_t)   mp_obj_get_int(args[2]);
-    uint8_t maxPower   = (uint8_t)  mp_obj_get_uint(args[3]);
-    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]);
-    uint8_t useProfile = 0;
-    if (n_args > 5) {
-        useProfile = (uint8_t)mp_obj_get_uint(args[5]);
-    }
+    uint8_t maxPower   = n_args > 3 ? (uint8_t) mp_obj_get_uint(args[3]) : 100;
+    Lpf2::BrakingStyle endState = n_args > 4 ? (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]) : Lpf2::BrakingStyle::FLOAT;
+    uint8_t useProfile = n_args > 5 ? (uint8_t)mp_obj_get_uint(args[5]) : 0;
     GET_VDEV_GENERIC(args[0])->Lpf2::Virtual::GenericDevice::startSpeedForTime(
         time, speed, maxPower, endState, useProfile);
     return mp_const_none;
 },
-5, 6);
+3, 6);
 
 DEFINE_VDEV_METHOD_VAR_BETWEEN(start_speed_for_degrees,
 {
     uint32_t degrees   = (uint32_t) mp_obj_get_ll(args[1]);
     int8_t speed       = (int8_t)   mp_obj_get_int(args[2]);
-    uint8_t maxPower   = (uint8_t)  mp_obj_get_uint(args[3]);
-    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]);
-    uint8_t useProfile = 0;
-    if (n_args > 5) {
-        useProfile = (uint8_t)mp_obj_get_uint(args[5]);
-    }
+    uint8_t maxPower   = n_args > 3 ? (uint8_t) mp_obj_get_uint(args[3]) : 100;
+    Lpf2::BrakingStyle endState = n_args > 4 ? (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]) : Lpf2::BrakingStyle::FLOAT;
+    uint8_t useProfile = n_args > 5 ? (uint8_t)mp_obj_get_uint(args[5]) : 0;
     GET_VDEV_GENERIC(args[0])->Lpf2::Virtual::GenericDevice::startSpeedForDegrees(
         degrees, speed, maxPower, endState, useProfile);
     return mp_const_none;
 },
-5, 6);
+3, 6);
 
 DEFINE_VDEV_METHOD_VAR_BETWEEN(goto_abs_position,
 {
     int32_t absPos     = (int32_t)  mp_obj_get_ll(args[1]);
     uint8_t speed      = (uint8_t)  mp_obj_get_uint(args[2]);
-    uint8_t maxPower   = (uint8_t)  mp_obj_get_uint(args[3]);
-    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]);
-    uint8_t useProfile = 0;
-    if (n_args > 5) {
-        useProfile = (uint8_t)mp_obj_get_uint(args[5]);
-    }
+    uint8_t maxPower   = n_args > 3 ? (uint8_t) mp_obj_get_uint(args[3]) : 100;
+    Lpf2::BrakingStyle endState = n_args > 4 ? (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]) : Lpf2::BrakingStyle::FLOAT;
+    uint8_t useProfile = n_args > 5 ? (uint8_t)mp_obj_get_uint(args[5]) : 0;
     GET_VDEV_GENERIC(args[0])->Lpf2::Virtual::GenericDevice::gotoAbsPosition(
         absPos, speed, maxPower, endState, useProfile);
     return mp_const_none;
 },
-5, 6);
+3, 6);
 
 DEFINE_VDEV_METHOD(preset_encoder, (mp_obj_t self_in, mp_obj_t pos)
 {

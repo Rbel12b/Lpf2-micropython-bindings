@@ -1,4 +1,7 @@
 #include "mod_types.h"
+extern "C" {
+#include "py/objlist.h"
+}
 
 #define DEFINE_HUB_EMU_METHOD(name, method, fun_obj_def) LPF2_DEFINE_METHOD(hub_emulation_##name, method, fun_obj_def)
 #define DEFINE_HUB_EMU_METHOD_VAR_BETWEEN(name, method, min_args, max_args) LPF2_DEFINE_METHOD_VAR_BETWEEN(hub_emulation_##name,  method, min_args, max_args)
@@ -19,6 +22,7 @@ static mp_obj_t lpf2_hub_emulation_make_new(const mp_obj_type_t *type,
 
     o->cpp_obj = new Lpf2::HubEmulation("Technic Hub", Lpf2::HubType::CONTROL_PLUS_HUB);
     o->owned = true;
+    o->attached_ports = mp_obj_new_list(0, NULL);
 
     return MP_OBJ_FROM_PTR(o);
 }
@@ -114,13 +118,15 @@ MP_DEFINE_CONST_FUN_OBJ_1);
 
 DEFINE_HUB_EMU_METHOD(attach_port, (mp_obj_t self_in, mp_obj_t port_num, mp_obj_t port)
 {
+    auto self = GET_SELF();
     mp_obj_t native_port = lpf2_cast_to_native_base(port, &lpf2_virtual_port_type);
     if (native_port == MP_OBJ_NULL)
         native_port = lpf2_cast_to_native_base(port, &lpf2_port_type);
     if (native_port == MP_OBJ_NULL)
         mp_raise_TypeError(MP_ERROR_TEXT("expected lpf2.port"));
     mp_obj_lpf2_port_t *port_obj = (mp_obj_lpf2_port_t *)MP_OBJ_TO_PTR(native_port);
-    GET_SELF_CPP()->attachPort(mp_obj_get_uint(port_num), port_obj->cpp_obj);
+    self->cpp_obj->attachPort(mp_obj_get_uint(port_num), port_obj->cpp_obj);
+    mp_obj_list_append(self->attached_ports, port);
     return mp_const_none;
 },
 MP_DEFINE_CONST_FUN_OBJ_3);
