@@ -190,21 +190,32 @@ DEFINE_VDEV_METHOD(write_data, (mp_obj_t self_in, mp_obj_t mode_in, mp_obj_t buf
 },
 MP_DEFINE_CONST_FUN_OBJ_3);
 
-DEFINE_VDEV_METHOD(set_mode, (mp_obj_t self_in, mp_obj_t mode)
+DEFINE_VDEV_METHOD_VAR_BETWEEN(set_mode,
 {
-    int ret = GET_VDEV_GENERIC(self_in)->Lpf2::Virtual::GenericDevice::setMode(
-        (uint8_t)mp_obj_get_uint(mode));
+    uint8_t mode = (uint8_t) mp_obj_get_uint(args[1]);
+    float delta = n_args > 2 ? mp_obj_get_float(args[2]) : 1.0f;
+    int ret = GET_VDEV_GENERIC(args[0])->Lpf2::Virtual::GenericDevice::setMode(mode, delta);
     return mp_obj_new_int(ret);
 },
-MP_DEFINE_CONST_FUN_OBJ_2);
+2, 3);
 
-DEFINE_VDEV_METHOD(set_mode_combo, (mp_obj_t self_in, mp_obj_t idx)
+DEFINE_VDEV_METHOD_VAR_BETWEEN(set_mode_combo,
 {
-    int ret = GET_VDEV_GENERIC(self_in)->Lpf2::Virtual::GenericDevice::setModeCombo(
-        (uint8_t)mp_obj_get_uint(idx));
+    uint8_t idx = (uint8_t) mp_obj_get_uint(args[1]);
+    std::vector<float> deltas;
+    if (n_args > 2) {
+        mp_obj_t *items;
+        size_t len;
+        mp_obj_get_array(args[2], &len, &items);
+        deltas.reserve(len);
+        for (size_t i = 0; i < len; ++i) {
+            deltas.push_back(mp_obj_get_float(items[i]));
+        }
+    }
+    int ret = GET_VDEV_GENERIC(args[0])->Lpf2::Virtual::GenericDevice::setModeCombo(idx, deltas);
     return mp_obj_new_int(ret);
 },
-MP_DEFINE_CONST_FUN_OBJ_2);
+2, 3);
 
 static const mp_rom_map_elem_t lpf2_virtual_device_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR___del__),              MP_ROM_PTR(&GET_VDEV_METHOD_OBJ(del))},

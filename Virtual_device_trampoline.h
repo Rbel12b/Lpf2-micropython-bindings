@@ -103,17 +103,22 @@ public:
         return mp_obj_get_int(ret);
     }
 
-    int setMode(uint8_t mode) override
+    int setMode(uint8_t mode, float delta = 1.0f) override
     {
         mp_obj_t method = mp_load_attr(self, MP_QSTR_setMode);
-        mp_obj_t ret = mp_call_function_1(method, mp_obj_new_int(mode));
+        mp_obj_t ret = mp_call_function_2(method, mp_obj_new_int(mode), mp_obj_new_float(delta));
         return mp_obj_get_int(ret);
     }
 
-    int setModeCombo(uint8_t idx) override
+    int setModeCombo(uint8_t idx, const std::vector<float>& deltas = {}) override
     {
         mp_obj_t method = mp_load_attr(self, MP_QSTR_setModeCombo);
-        mp_obj_t ret = mp_call_function_1(method, mp_obj_new_int(idx));
+        mp_obj_t tup = mp_obj_new_tuple(deltas.size(), nullptr);
+        mp_obj_tuple_t *t = (mp_obj_tuple_t*)MP_OBJ_TO_PTR(tup);
+        for (size_t i = 0; i < deltas.size(); ++i) {
+            t->items[i] = mp_obj_new_float(deltas[i]);
+        }
+        mp_obj_t ret = mp_call_function_2(method, mp_obj_new_int(idx), tup);
         return mp_obj_get_int(ret);
     }
 };

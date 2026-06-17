@@ -163,19 +163,36 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(set_rgb_color,
 },
 4, 4);
 
-DEFINE_PORT_METHOD(set_mode, (mp_obj_t self_in, mp_obj_t mode)
+DEFINE_PORT_METHOD_VAR_BETWEEN(set_mode,
 {
-    int ret = GET_SELF_CPP()->setMode(mp_obj_get_uint(mode));
-    return mp_obj_new_int(ret);
-},
-MP_DEFINE_CONST_FUN_OBJ_2);
+    void *self_in = MP_OBJ_TO_PTR(args[0]);
 
-DEFINE_PORT_METHOD(set_mode_combo, (mp_obj_t self_in, mp_obj_t idx)
-{
-    int ret = GET_SELF_CPP()->setModeCombo(mp_obj_get_uint(idx));
+    uint8_t mode = (uint8_t) mp_obj_get_uint(args[1]);
+    float delta = n_args > 2 ? mp_obj_get_float(args[2]) : 1.0f;
+    int ret = GET_SELF_CPP()->setMode(mode, delta);
     return mp_obj_new_int(ret);
 },
-MP_DEFINE_CONST_FUN_OBJ_2);
+2, 3);
+
+DEFINE_PORT_METHOD_VAR_BETWEEN(set_mode_combo,
+{
+    void *self_in = MP_OBJ_TO_PTR(args[0]);
+
+    uint8_t idx = (uint8_t) mp_obj_get_uint(args[1]);
+    std::vector<float> deltas;
+    if (n_args > 2) {
+        mp_obj_t *items;
+        size_t len;
+        mp_obj_get_array(args[2], &len, &items);
+        deltas.reserve(len);
+        for (size_t i = 0; i < len; ++i) {
+            deltas.push_back(mp_obj_get_float(items[i]));
+        }
+    }
+    int ret = GET_SELF_CPP()->setModeCombo(idx, deltas);
+    return mp_obj_new_int(ret);
+},
+2, 3);
 
 DEFINE_PORT_METHOD(is_device_connected, (mp_obj_t self_in)
 {

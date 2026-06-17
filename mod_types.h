@@ -12,10 +12,13 @@ extern "C" {
 static inline mp_obj_t lpf2_cast_to_native_base(mp_obj_t obj, const mp_obj_type_t *native_type)
 {
     while (true) {
-        if (mp_obj_is_type(obj, native_type)) {
-            return obj;
-        }
         const mp_obj_type_t *type = mp_obj_get_type(obj);
+        for (const mp_obj_type_t *t = type; t != NULL;
+             t = (const mp_obj_type_t *)MP_OBJ_TYPE_GET_SLOT_OR_NULL(t, parent)) {
+            if (t == native_type) {
+                return obj;
+            }
+        }
         if (!mp_obj_is_instance_type(type)) {
             return MP_OBJ_NULL;
         }
@@ -208,8 +211,8 @@ LPF2_DEFINE_PORT_METHOD_VAR_OBJ_EXTERN(goto_abs_pos);
 LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(preset_encoder);
 LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(set_rgb_color_idx);
 LPF2_DEFINE_PORT_METHOD_VAR_OBJ_EXTERN(set_rgb_color);
-LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(set_mode);
-LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(set_mode_combo);
+LPF2_DEFINE_PORT_METHOD_VAR_OBJ_EXTERN(set_mode);
+LPF2_DEFINE_PORT_METHOD_VAR_OBJ_EXTERN(set_mode_combo);
 LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(is_device_connected);
 LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(get_value);
 LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(get_value_str);
