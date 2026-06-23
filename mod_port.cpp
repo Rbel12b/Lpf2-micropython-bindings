@@ -7,6 +7,51 @@ extern "C" {
 
 #define SELF_TYPE mp_obj_lpf2_port_t
 
+// Build a typed device wrapper for the current device on `port`.
+// Returns mp_const_none if no device is attached. Allocates a heap
+// shared_ptr<DeviceSlot> in the wrapper's `slot` field, freed by __del__.
+template <typename Wrapper>
+static mp_obj_t lpf2_make_device_wrapper(mp_obj_t port_obj_in,
+                                         const mp_obj_type_t *type,
+                                         std::shared_ptr<Lpf2::DeviceSlot> handle,
+                                         uint32_t gen)
+{
+    auto *o = (Wrapper *)m_malloc_with_finaliser(sizeof(Wrapper));
+    o->base.type = type;
+    o->slot = new std::shared_ptr<Lpf2::DeviceSlot>(std::move(handle));
+    o->gen = gen;
+    o->port_ref = port_obj_in;
+    return MP_OBJ_FROM_PTR(o);
+}
+
+static mp_obj_t lpf2_port_make_device_obj(mp_obj_t port_obj_in, Lpf2::Port *port)
+{
+    Lpf2::Device *dev = port->device();
+    if (!dev)
+        return mp_const_none;
+    auto handle = port->deviceHandle();
+    if (!handle)
+        return mp_const_none;
+    uint32_t gen = handle->gen;
+
+    if (dev->hasCapability(Lpf2::Devices::EncoderMotor::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_encoder_motor_t>(
+            port_obj_in, &lpf2_encoder_motor_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::BasicMotor::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_basic_motor_t>(
+            port_obj_in, &lpf2_basic_motor_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::TechnicColorSensor::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_color_sensor_t>(
+            port_obj_in, &lpf2_color_sensor_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::TechnicDistanceSensor::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_distance_sensor_t>(
+            port_obj_in, &lpf2_distance_sensor_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::PortExpander::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_port_expander_dev_t>(
+            port_obj_in, &lpf2_port_expander_type, handle, gen);
+    return mp_const_none;
+}
+
 extern "C" {
 static mp_obj_t lpf2_port_make_new(const mp_obj_type_t *type,
                                     size_t n_args,
@@ -33,6 +78,19 @@ DEFINE_PORT_METHOD(update, (mp_obj_t self_in)
 {
     GET_SELF_CPP()->update();
     return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
+DEFINE_PORT_METHOD(init, (mp_obj_t self_in)
+{
+    GET_SELF_CPP()->init();
+    return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
+DEFINE_PORT_METHOD(device, (mp_obj_t self_in)
+{
+    return lpf2_port_make_device_obj(self_in, GET_SELF_CPP());
 },
 MP_DEFINE_CONST_FUN_OBJ_1);
 
@@ -313,6 +371,8 @@ MP_DEFINE_CONST_FUN_OBJ_1);
 
 static const mp_rom_map_elem_t lpf2_port_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR___del__), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(del))},
+    {MP_ROM_QSTR(MP_QSTR_init), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(init))},
+    {MP_ROM_QSTR(MP_QSTR_device), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(device))},
     {MP_ROM_QSTR(MP_QSTR_update), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(update))},
     {MP_ROM_QSTR(MP_QSTR_writeData), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(write_data))},
     {MP_ROM_QSTR(MP_QSTR_startPower), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(start_power))},

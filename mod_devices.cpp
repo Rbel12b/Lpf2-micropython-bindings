@@ -1,5 +1,13 @@
 #include "mod_types.h"
 
+#define DEVICE_DEL(name, wrapper_t)                                             \
+    static mp_obj_t lpf2_##name##_del(mp_obj_t self_in)                         \
+    {                                                                           \
+        lpf2_device_slot_del<wrapper_t>(self_in);                               \
+        return mp_const_none;                                                   \
+    }                                                                           \
+    static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_##name##_del_obj, lpf2_##name##_del)
+
 extern "C" {
 
 /* ------------------------------------------------------------------ */
@@ -7,7 +15,9 @@ extern "C" {
 /* ------------------------------------------------------------------ */
 
 #define SELF_TYPE mp_obj_lpf2_basic_motor_t
-#define GET_BM_CPP(self_in) (((SELF_TYPE*)MP_OBJ_TO_PTR(self_in))->cpp_obj)
+#define GET_BM_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::BasicMotor, SELF_TYPE>(self_in)
+
+DEVICE_DEL(basic_motor, SELF_TYPE);
 
 static mp_obj_t lpf2_basic_motor_start_power(mp_obj_t self_in, mp_obj_t pw)
 {
@@ -30,6 +40,7 @@ static mp_obj_t lpf2_basic_motor_name(mp_obj_t self_in)
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_basic_motor_name_obj, lpf2_basic_motor_name);
 
 static const mp_rom_map_elem_t lpf2_basic_motor_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_basic_motor_del_obj)},
     {MP_ROM_QSTR(MP_QSTR_startPower),    MP_ROM_PTR(&lpf2_basic_motor_start_power_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_basic_motor_get_device_type_obj)},
     {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_basic_motor_name_obj)},
@@ -51,7 +62,9 @@ MP_DEFINE_CONST_OBJ_TYPE(
 /* ------------------------------------------------------------------ */
 
 #define SELF_TYPE mp_obj_lpf2_encoder_motor_t
-#define GET_EM_CPP(self_in) (((SELF_TYPE*)MP_OBJ_TO_PTR(self_in))->cpp_obj)
+#define GET_EM_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::EncoderMotor, SELF_TYPE>(self_in)
+
+DEVICE_DEL(encoder_motor, SELF_TYPE);
 
 static mp_obj_t lpf2_encoder_motor_start_power(mp_obj_t self_in, mp_obj_t pw)
 {
@@ -143,6 +156,7 @@ static mp_obj_t lpf2_encoder_motor_name(mp_obj_t self_in)
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_encoder_motor_name_obj, lpf2_encoder_motor_name);
 
 static const mp_rom_map_elem_t lpf2_encoder_motor_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),              MP_ROM_PTR(&lpf2_encoder_motor_del_obj)},
     {MP_ROM_QSTR(MP_QSTR_startPower),           MP_ROM_PTR(&lpf2_encoder_motor_start_power_obj)},
     {MP_ROM_QSTR(MP_QSTR_setAccTime),           MP_ROM_PTR(&lpf2_encoder_motor_set_acc_time_obj)},
     {MP_ROM_QSTR(MP_QSTR_setDecTime),           MP_ROM_PTR(&lpf2_encoder_motor_set_dec_time_obj)},
@@ -171,7 +185,9 @@ MP_DEFINE_CONST_OBJ_TYPE(
 /* ------------------------------------------------------------------ */
 
 #define SELF_TYPE mp_obj_lpf2_color_sensor_t
-#define GET_CS_CPP(self_in) (((SELF_TYPE*)MP_OBJ_TO_PTR(self_in))->cpp_obj)
+#define GET_CS_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::TechnicColorSensor, SELF_TYPE>(self_in)
+
+DEVICE_DEL(color_sensor, SELF_TYPE);
 
 static mp_obj_t lpf2_color_sensor_get_color_idx(mp_obj_t self_in)
 {
@@ -193,6 +209,7 @@ static mp_obj_t lpf2_color_sensor_name(mp_obj_t self_in)
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_sensor_name_obj, lpf2_color_sensor_name);
 
 static const mp_rom_map_elem_t lpf2_color_sensor_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_color_sensor_del_obj)},
     {MP_ROM_QSTR(MP_QSTR_getColorIdx),   MP_ROM_PTR(&lpf2_color_sensor_get_color_idx_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_color_sensor_get_device_type_obj)},
     {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_color_sensor_name_obj)},
@@ -214,7 +231,9 @@ MP_DEFINE_CONST_OBJ_TYPE(
 /* ------------------------------------------------------------------ */
 
 #define SELF_TYPE mp_obj_lpf2_distance_sensor_t
-#define GET_DS_CPP(self_in) (((SELF_TYPE*)MP_OBJ_TO_PTR(self_in))->cpp_obj)
+#define GET_DS_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::TechnicDistanceSensor, SELF_TYPE>(self_in)
+
+DEVICE_DEL(distance_sensor, SELF_TYPE);
 
 static mp_obj_t lpf2_distance_sensor_set_light(size_t n_args, const mp_obj_t *args)
 {
@@ -247,6 +266,7 @@ static mp_obj_t lpf2_distance_sensor_name(mp_obj_t self_in)
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_distance_sensor_name_obj, lpf2_distance_sensor_name);
 
 static const mp_rom_map_elem_t lpf2_distance_sensor_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_distance_sensor_del_obj)},
     {MP_ROM_QSTR(MP_QSTR_setLight),      MP_ROM_PTR(&lpf2_distance_sensor_set_light_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDistance),   MP_ROM_PTR(&lpf2_distance_sensor_get_distance_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_distance_sensor_get_device_type_obj)},
@@ -269,7 +289,9 @@ MP_DEFINE_CONST_OBJ_TYPE(
 /* ------------------------------------------------------------------ */
 
 #define SELF_TYPE mp_obj_lpf2_port_expander_dev_t
-#define GET_PE_CPP(self_in) (((SELF_TYPE*)MP_OBJ_TO_PTR(self_in))->cpp_obj)
+#define GET_PE_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::PortExpander, SELF_TYPE>(self_in)
+
+DEVICE_DEL(port_expander_dev, SELF_TYPE);
 
 static mp_obj_t lpf2_port_expander_dev_get_port(mp_obj_t self_in, mp_obj_t port_num_in)
 {
@@ -302,6 +324,7 @@ static mp_obj_t lpf2_port_expander_dev_name(mp_obj_t self_in)
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_port_expander_dev_name_obj, lpf2_port_expander_dev_name);
 
 static const mp_rom_map_elem_t lpf2_port_expander_dev_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_port_expander_dev_del_obj)},
     {MP_ROM_QSTR(MP_QSTR_getPort),       MP_ROM_PTR(&lpf2_port_expander_dev_get_port_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_port_expander_dev_get_device_type_obj)},
     {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_port_expander_dev_name_obj)},

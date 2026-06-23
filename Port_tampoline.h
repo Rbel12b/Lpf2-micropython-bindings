@@ -13,7 +13,7 @@ public:
 
     PortTrampoline(mp_obj_t self_in) : self(self_in) {}
 
-    void update() override
+    void _update() override
     {
         mp_obj_t method = mp_load_attr(self, MP_QSTR_update);
         mp_call_function_0(method);

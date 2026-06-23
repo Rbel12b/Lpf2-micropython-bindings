@@ -160,25 +160,76 @@ typedef struct _mp_obj_lpf2_hub_emulation_t
 } mp_obj_lpf2_hub_emulation_t;
 extern const mp_obj_type_t lpf2_hub_emulation_type;
 
-typedef struct _mp_obj_lpf2_device_manager_t
-{
+typedef struct {
     mp_obj_base_t base;
-    Lpf2::DeviceManager *cpp_obj = nullptr;
-    bool owned = false;
+    // Heap-allocated shared handle to the port-owned Device. The pointer
+    // (and the shared_ptr itself) is created when the wrapper is minted
+    // by Port::device(); freed in __del__. `gen` is the slot generation
+    // observed at handoff — methods raise if it no longer matches.
+    std::shared_ptr<Lpf2::DeviceSlot> *slot;
+    uint32_t gen;
     mp_obj_t port_ref;
-} mp_obj_lpf2_device_manager_t;
-extern const mp_obj_type_t lpf2_device_manager_type;
-
-typedef struct { mp_obj_base_t base; Lpf2::Devices::BasicMotor *cpp_obj; mp_obj_t manager_ref; } mp_obj_lpf2_basic_motor_t;
-typedef struct { mp_obj_base_t base; Lpf2::Devices::EncoderMotor *cpp_obj; mp_obj_t manager_ref; } mp_obj_lpf2_encoder_motor_t;
-typedef struct { mp_obj_base_t base; Lpf2::Devices::TechnicColorSensor *cpp_obj; mp_obj_t manager_ref; } mp_obj_lpf2_color_sensor_t;
-typedef struct { mp_obj_base_t base; Lpf2::Devices::TechnicDistanceSensor *cpp_obj; mp_obj_t manager_ref; } mp_obj_lpf2_distance_sensor_t;
-typedef struct { mp_obj_base_t base; Lpf2::Devices::PortExpander *cpp_obj; mp_obj_t manager_ref; } mp_obj_lpf2_port_expander_dev_t;
+} mp_obj_lpf2_basic_motor_t;
+typedef struct {
+    mp_obj_base_t base;
+    std::shared_ptr<Lpf2::DeviceSlot> *slot;
+    uint32_t gen;
+    mp_obj_t port_ref;
+} mp_obj_lpf2_encoder_motor_t;
+typedef struct {
+    mp_obj_base_t base;
+    std::shared_ptr<Lpf2::DeviceSlot> *slot;
+    uint32_t gen;
+    mp_obj_t port_ref;
+} mp_obj_lpf2_color_sensor_t;
+typedef struct {
+    mp_obj_base_t base;
+    std::shared_ptr<Lpf2::DeviceSlot> *slot;
+    uint32_t gen;
+    mp_obj_t port_ref;
+} mp_obj_lpf2_distance_sensor_t;
+typedef struct {
+    mp_obj_base_t base;
+    std::shared_ptr<Lpf2::DeviceSlot> *slot;
+    uint32_t gen;
+    mp_obj_t port_ref;
+} mp_obj_lpf2_port_expander_dev_t;
 extern const mp_obj_type_t lpf2_basic_motor_type;
 extern const mp_obj_type_t lpf2_encoder_motor_type;
 extern const mp_obj_type_t lpf2_color_sensor_type;
 extern const mp_obj_type_t lpf2_distance_sensor_type;
 extern const mp_obj_type_t lpf2_port_expander_type;
+
+} // extern "C"
+
+// Resolve the typed device pointer from a slot-based wrapper; raise
+// RuntimeError if the slot was invalidated since this wrapper was created.
+template <typename Cpp, typename Wrapper>
+static inline Cpp *lpf2_device_get_cpp(mp_obj_t self_in)
+{
+    auto *self = (Wrapper *)MP_OBJ_TO_PTR(self_in);
+    if (!self->slot || !*self->slot) {
+        mp_raise_msg(&mp_type_RuntimeError, MP_ERROR_TEXT("device no longer available"));
+    }
+    Lpf2::DeviceSlot &slot = **self->slot;
+    if (slot.gen != self->gen || slot.ptr == nullptr) {
+        mp_raise_msg(&mp_type_RuntimeError, MP_ERROR_TEXT("device no longer available"));
+    }
+    return static_cast<Cpp *>(slot.ptr);
+}
+
+// Free the heap-allocated shared_ptr; safe to call multiple times.
+template <typename Wrapper>
+static inline void lpf2_device_slot_del(mp_obj_t self_in)
+{
+    auto *self = (Wrapper *)MP_OBJ_TO_PTR(self_in);
+    if (self->slot) {
+        delete self->slot;
+        self->slot = nullptr;
+    }
+}
+
+extern "C" {
 
 typedef struct _mp_obj_lpf2_virtual_port_expander_device_t
 {
@@ -200,6 +251,8 @@ LPF2_MOD_EXTERN(button_state);
 LPF2_MOD_EXTERN(port_num);
 
 LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(update);
+LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(init);
+LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(device);
 LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(write_data);
 LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(start_power);
 LPF2_DEFINE_PORT_METHOD_OBJ_EXTERN(set_acc_time);
