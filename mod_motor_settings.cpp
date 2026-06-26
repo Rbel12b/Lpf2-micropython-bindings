@@ -71,6 +71,7 @@ static void lpf2_motor_settings_attr(mp_obj_t self_in, qstr attr, mp_obj_t *dest
         }
         break;
     }
+    MS_LOAD_STORE_FLOAT(pos_handoff_deg);
     MS_LOAD_STORE_FLOAT(breakaway_pct);
     MS_LOAD_STORE_FLOAT(kinetic_floor_pct);
 
