@@ -140,7 +140,10 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed,
     void *self_in = MP_OBJ_TO_PTR(args[0]);
 
     int8_t speed       = (int8_t)  mp_obj_get_int(args[1]);
-    uint8_t maxPower   = (uint8_t) mp_obj_get_uint(args[2]);
+    uint8_t maxPower   = 100;
+    if (n_args > 2) {
+        maxPower = (uint8_t) mp_obj_get_uint(args[2]);
+    }
     uint8_t useProfile = 0;
     if (n_args > 3) {
         useProfile = (uint8_t) mp_obj_get_uint(args[3]);
@@ -148,7 +151,7 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed,
     GET_SELF_CPP()->startSpeed(speed, maxPower, useProfile);
     return mp_const_none;
 },
-3, 4);
+2, 4);
 
 DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed_for_time,
 {
