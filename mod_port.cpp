@@ -139,26 +139,20 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed,
 {
     void *self_in = MP_OBJ_TO_PTR(args[0]);
 
-    int8_t speed       = (int8_t)  mp_obj_get_int(args[1]);
-    uint8_t maxPower   = 100;
-    if (n_args > 2) {
-        maxPower = (uint8_t) mp_obj_get_uint(args[2]);
-    }
-    uint8_t useProfile = 0;
-    if (n_args > 3) {
-        useProfile = (uint8_t) mp_obj_get_uint(args[3]);
-    }
+    int8_t speed       = n_args > 1 ? (int8_t) mp_obj_get_int(args[1]) : 100;
+    uint8_t maxPower   = n_args > 2 ? (uint8_t) mp_obj_get_uint(args[2]) : 100;
+    uint8_t useProfile = n_args > 3 ? (uint8_t) mp_obj_get_uint(args[3]) : 0;
     GET_SELF_CPP()->startSpeed(speed, maxPower, useProfile);
     return mp_const_none;
 },
-2, 4);
+1, 4);
 
 DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed_for_time,
 {
     void *self_in = MP_OBJ_TO_PTR(args[0]);
 
     uint16_t time      = (uint16_t) mp_obj_get_uint(args[1]);
-    int8_t speed       = (int8_t)   mp_obj_get_int(args[2]);
+    int8_t speed       = n_args > 2 ? (int8_t) mp_obj_get_int(args[2]) : 100;
     uint8_t maxPower   = n_args > 3 ? (uint8_t) mp_obj_get_uint(args[3]) : 100;
     Lpf2::BrakingStyle endState = n_args > 4 ? (Lpf2::BrakingStyle) mp_obj_get_uint(args[4]) : Lpf2::BrakingStyle::FLOAT;
     uint8_t useProfile = n_args > 5 ? (uint8_t) mp_obj_get_uint(args[5]) : 0;
@@ -166,14 +160,14 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed_for_time,
     GET_SELF_CPP()->startSpeedForTime(time, speed, maxPower, endState, useProfile);
     return mp_const_none;
 },
-3, 6);
+2, 6);
 
 DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed_for_degrees,
 {
     void *self_in = MP_OBJ_TO_PTR(args[0]);
 
     uint32_t degrees   = (uint32_t) mp_obj_get_ll(args[1]);
-    int8_t speed       = (int8_t)   mp_obj_get_int(args[2]);
+    int8_t speed       = n_args > 2 ? (int8_t) mp_obj_get_int(args[2]) : 100;
     uint8_t maxPower   = n_args > 3 ? (uint8_t) mp_obj_get_uint(args[3]) : 100;
     Lpf2::BrakingStyle endState = n_args > 4 ? (Lpf2::BrakingStyle) mp_obj_get_uint(args[4]) : Lpf2::BrakingStyle::FLOAT;
     uint8_t useProfile = n_args > 5 ? (uint8_t) mp_obj_get_uint(args[5]) : 0;
@@ -181,14 +175,14 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(start_speed_for_degrees,
     GET_SELF_CPP()->startSpeedForDegrees(degrees, speed, maxPower, endState, useProfile);
     return mp_const_none;
 },
-3, 6);
+2, 6);
 
 DEFINE_PORT_METHOD_VAR_BETWEEN(goto_abs_pos,
 {
     void *self_in = MP_OBJ_TO_PTR(args[0]);
 
     int32_t absPos     = (int32_t)  mp_obj_get_ll(args[1]);
-    uint8_t speed      = (uint8_t)  mp_obj_get_uint(args[2]);
+    uint8_t speed      = n_args > 2 ? (uint8_t) mp_obj_get_uint(args[2]) : 100;
     uint8_t maxPower   = n_args > 3 ? (uint8_t) mp_obj_get_uint(args[3]) : 100;
     Lpf2::BrakingStyle endState = n_args > 4 ? (Lpf2::BrakingStyle) mp_obj_get_uint(args[4]) : Lpf2::BrakingStyle::FLOAT;
     uint8_t useProfile = n_args > 5 ? (uint8_t) mp_obj_get_uint(args[5]) : 0;
@@ -196,7 +190,7 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(goto_abs_pos,
     GET_SELF_CPP()->gotoAbsPosition(absPos, speed, maxPower, endState, useProfile);
     return mp_const_none;
 },
-3, 6);
+2, 6);
 
 DEFINE_PORT_METHOD(preset_encoder, (mp_obj_t self_in, mp_obj_t pos)
 {

@@ -91,49 +91,49 @@ static MP_DEFINE_CONST_FUN_OBJ_3(lpf2_encoder_motor_set_dec_time_obj, lpf2_encod
 
 static mp_obj_t lpf2_encoder_motor_start_speed(size_t n_args, const mp_obj_t *args)
 {
-    int8_t  speed      = (int8_t) mp_obj_get_int(args[1]);
+    int8_t  speed      = n_args > 1 ? (int8_t)mp_obj_get_int(args[1]) : 100;
     uint8_t maxPower   = n_args > 2 ? (uint8_t)mp_obj_get_uint(args[2]) : 100;
     uint8_t useProfile = n_args > 3 ? (uint8_t)mp_obj_get_uint(args[3]) : 0;
     GET_EM_CPP(args[0])->startSpeed(speed, maxPower, useProfile);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_encoder_motor_start_speed_obj, 2, 4, lpf2_encoder_motor_start_speed);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_encoder_motor_start_speed_obj, 1, 4, lpf2_encoder_motor_start_speed);
 
 static mp_obj_t lpf2_encoder_motor_start_speed_for_time(size_t n_args, const mp_obj_t *args)
 {
     uint16_t time      = (uint16_t)mp_obj_get_uint(args[1]);
-    int8_t   speed     = (int8_t)  mp_obj_get_int(args[2]);
-    uint8_t  maxPower  = (uint8_t) mp_obj_get_uint(args[3]);
-    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]);
+    int8_t   speed     = n_args > 2 ? (int8_t)mp_obj_get_int(args[2]) : 100;
+    uint8_t  maxPower  = n_args > 3 ? (uint8_t)mp_obj_get_uint(args[3]) : 100;
+    Lpf2::BrakingStyle endState = n_args > 4 ? (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]) : Lpf2::BrakingStyle::FLOAT;
     uint8_t  useProfile = n_args > 5 ? (uint8_t)mp_obj_get_uint(args[5]) : 0;
     GET_EM_CPP(args[0])->startSpeedForTime(time, speed, maxPower, endState, useProfile);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_encoder_motor_start_speed_for_time_obj, 5, 6, lpf2_encoder_motor_start_speed_for_time);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_encoder_motor_start_speed_for_time_obj, 2, 6, lpf2_encoder_motor_start_speed_for_time);
 
 static mp_obj_t lpf2_encoder_motor_start_speed_for_degrees(size_t n_args, const mp_obj_t *args)
 {
     uint32_t degrees   = (uint32_t)mp_obj_get_ll(args[1]);
-    int8_t   speed     = (int8_t)  mp_obj_get_int(args[2]);
-    uint8_t  maxPower  = (uint8_t) mp_obj_get_uint(args[3]);
-    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]);
+    int8_t   speed     = n_args > 2 ? (int8_t)mp_obj_get_int(args[2]) : 100;
+    uint8_t  maxPower  = n_args > 3 ? (uint8_t)mp_obj_get_uint(args[3]) : 100;
+    Lpf2::BrakingStyle endState = n_args > 4 ? (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]) : Lpf2::BrakingStyle::FLOAT;
     uint8_t  useProfile = n_args > 5 ? (uint8_t)mp_obj_get_uint(args[5]) : 0;
     GET_EM_CPP(args[0])->startSpeedForDegrees(degrees, speed, maxPower, endState, useProfile);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_encoder_motor_start_speed_for_degrees_obj, 5, 6, lpf2_encoder_motor_start_speed_for_degrees);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_encoder_motor_start_speed_for_degrees_obj, 2, 6, lpf2_encoder_motor_start_speed_for_degrees);
 
 static mp_obj_t lpf2_encoder_motor_goto_abs_pos(size_t n_args, const mp_obj_t *args)
 {
     int32_t  absPos    = (int32_t) mp_obj_get_ll(args[1]);
-    uint8_t  speed     = (uint8_t) mp_obj_get_uint(args[2]);
-    uint8_t  maxPower  = (uint8_t) mp_obj_get_uint(args[3]);
-    Lpf2::BrakingStyle endState = (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]);
+    uint8_t  speed     = n_args > 2 ? (uint8_t)mp_obj_get_uint(args[2]) : 100;
+    uint8_t  maxPower  = n_args > 3 ? (uint8_t)mp_obj_get_uint(args[3]) : 100;
+    Lpf2::BrakingStyle endState = n_args > 4 ? (Lpf2::BrakingStyle)mp_obj_get_uint(args[4]) : Lpf2::BrakingStyle::FLOAT;
     uint8_t  useProfile = n_args > 5 ? (uint8_t)mp_obj_get_uint(args[5]) : 0;
     GET_EM_CPP(args[0])->gotoAbsPosition(absPos, speed, maxPower, endState, useProfile);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_encoder_motor_goto_abs_pos_obj, 5, 6, lpf2_encoder_motor_goto_abs_pos);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_encoder_motor_goto_abs_pos_obj, 2, 6, lpf2_encoder_motor_goto_abs_pos);
 
 static mp_obj_t lpf2_encoder_motor_preset_encoder(mp_obj_t self_in, mp_obj_t pos)
 {
