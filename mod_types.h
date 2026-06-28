@@ -1,3 +1,12 @@
+#if defined(__has_include)
+#  if __has_include("Lpf2/PortExpander/Device.hpp") && __has_include("Lpf2/PortExpander/VirtualDevice.hpp")
+#    define LPF2_HAS_PORT_EXPANDER 1
+#  endif
+#endif
+#ifndef LPF2_HAS_PORT_EXPANDER
+#  define LPF2_HAS_PORT_EXPANDER 0
+#endif
+
 extern "C" {
 #include "py/runtime.h"
 #include "py/objtype.h"
@@ -37,8 +46,10 @@ static inline mp_obj_t lpf2_cast_to_native_base(mp_obj_t obj, const mp_obj_type_
 #include "Lpf2/Devices/EncoderMotor.hpp"
 #include "Lpf2/Devices/ColorSensor.hpp"
 #include "Lpf2/Devices/DistanceSensor.hpp"
+#if LPF2_HAS_PORT_EXPANDER
 #include "Lpf2/PortExpander/Device.hpp"
 #include "Lpf2/PortExpander/VirtualDevice.hpp"
+#endif
 
 #define LPF2_DEFINE_METHOD(name, method, fun_obj_def) \
     static mp_obj_t lpf2_##name method \
@@ -188,17 +199,21 @@ typedef struct {
     uint32_t gen;
     mp_obj_t port_ref;
 } mp_obj_lpf2_distance_sensor_t;
+#if LPF2_HAS_PORT_EXPANDER
 typedef struct {
     mp_obj_base_t base;
     std::shared_ptr<Lpf2::DeviceSlot> *slot;
     uint32_t gen;
     mp_obj_t port_ref;
 } mp_obj_lpf2_port_expander_dev_t;
+#endif
 extern const mp_obj_type_t lpf2_basic_motor_type;
 extern const mp_obj_type_t lpf2_encoder_motor_type;
 extern const mp_obj_type_t lpf2_color_sensor_type;
 extern const mp_obj_type_t lpf2_distance_sensor_type;
+#if LPF2_HAS_PORT_EXPANDER
 extern const mp_obj_type_t lpf2_port_expander_type;
+#endif
 
 } // extern "C"
 
@@ -231,6 +246,7 @@ static inline void lpf2_device_slot_del(mp_obj_t self_in)
 
 extern "C" {
 
+#if LPF2_HAS_PORT_EXPANDER
 typedef struct _mp_obj_lpf2_virtual_port_expander_device_t
 {
     mp_obj_base_t base;
@@ -239,6 +255,7 @@ typedef struct _mp_obj_lpf2_virtual_port_expander_device_t
     mp_obj_t port_refs[4]; // indexed by PortExpander::PortNum (A=0..D=3)
 } mp_obj_lpf2_virtual_port_expander_device_t;
 extern const mp_obj_type_t lpf2_virtual_port_expander_device_type;
+#endif
 
 extern const mp_obj_fun_builtin_fixed_t lpf2_devices_register_default_obj;
 

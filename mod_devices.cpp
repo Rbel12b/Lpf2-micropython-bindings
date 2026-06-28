@@ -288,6 +288,7 @@ MP_DEFINE_CONST_OBJ_TYPE(
 /* port_expander_dev (hardware)                                         */
 /* ------------------------------------------------------------------ */
 
+#if LPF2_HAS_PORT_EXPANDER
 #define SELF_TYPE mp_obj_lpf2_port_expander_dev_t
 #define GET_PE_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::PortExpander, SELF_TYPE>(self_in)
 
@@ -340,6 +341,7 @@ MP_DEFINE_CONST_OBJ_TYPE(
 
 #undef SELF_TYPE
 #undef GET_PE_CPP
+#endif // LPF2_HAS_PORT_EXPANDER
 
 /* ------------------------------------------------------------------ */
 /* registerDefault                                                      */

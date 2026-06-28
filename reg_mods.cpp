@@ -19,10 +19,13 @@ LPF2_DEFINE_MOD_WITH_GLOB(devices,
     LPF2_GET_LPF2_TYPE_REG(encoder_motor),
     LPF2_GET_LPF2_TYPE_REG(color_sensor),
     LPF2_GET_LPF2_TYPE_REG(distance_sensor),
+#if LPF2_HAS_PORT_EXPANDER
     LPF2_GET_LPF2_TYPE_REG(port_expander),
+#endif
     { MP_ROM_QSTR(MP_QSTR_registerDefault), MP_ROM_PTR(&lpf2_devices_register_default_obj) }
 );
 
+#if LPF2_HAS_PORT_EXPANDER
 /* --- lpf2.port_expander.port_num --- */
 LPF2_DEFINE_MOD_WITH_GLOB_STATIC(port_expander_port_num,
     { MP_ROM_QSTR(MP_QSTR_A), MP_ROM_INT((uint8_t)Lpf2::PortExpander::PortNum::A) },
@@ -36,6 +39,7 @@ LPF2_DEFINE_MOD_WITH_GLOB(port_expander,
     LPF2_GET_LPF2_TYPE_REG(virtual_port_expander_device),
     { MP_ROM_QSTR(MP_QSTR_port_num), MP_ROM_PTR(&LPF2_GET_MOD(port_expander_port_num)) }
 );
+#endif
 
 /* --- lpf2 --- */
 LPF2_DEFINE_MOD_WITH_GLOB_ATTR_USED(lpf2,
@@ -51,7 +55,9 @@ LPF2_DEFINE_MOD_WITH_GLOB_ATTR_USED(lpf2,
     LPF2_GET_LPF2_MOD_REG(local),
     LPF2_GET_LPF2_MOD_REG(virtual),
     LPF2_GET_LPF2_MOD_REG(devices),
+#if LPF2_HAS_PORT_EXPANDER
     LPF2_GET_LPF2_MOD_REG(port_expander),
+#endif
     LPF2_GET_LPF2_TYPE_REG(port),
     LPF2_GET_LPF2_TYPE_REG(mode),
     LPF2_GET_LPF2_TYPE_REG(version),

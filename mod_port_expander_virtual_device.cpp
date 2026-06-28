@@ -1,5 +1,7 @@
 #include "mod_types.h"
 
+#if LPF2_HAS_PORT_EXPANDER
+
 #define DEFINE_VPED_METHOD(name, method, fun_obj_def) LPF2_DEFINE_METHOD(virtual_port_expander_device_##name, method, fun_obj_def)
 #define GET_VPED_METHOD_OBJ(name) LPF2_GET_METHOD_OBJ(virtual_port_expander_device_##name)
 
@@ -74,3 +76,5 @@ MP_DEFINE_CONST_OBJ_TYPE(
 );
 
 } // extern "C"
+
+#endif // LPF2_HAS_PORT_EXPANDER
