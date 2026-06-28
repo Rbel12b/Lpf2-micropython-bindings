@@ -1,0 +1,6 @@
+MOTOR: int
+LED: int
+SPEAKER: int
+COLOR: int
+SPEEDOMETER: int
+VOLTAGE: int

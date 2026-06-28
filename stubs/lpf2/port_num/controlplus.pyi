@@ -1,0 +1,13 @@
+A: int
+B: int
+C: int
+D: int
+LED: int
+CURRENT: int
+VOLTAGE: int
+TEMP: int
+TEMP2: int
+ACCELEROMETER: int
+GYRO: int
+TILT: int
+GESTURE: int

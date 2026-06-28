@@ -1,0 +1,13 @@
+BLACK: int
+PINK: int
+PURPLE: int
+BLUE: int
+LIGHTBLUE: int
+CYAN: int
+GREEN: int
+YELLOW: int
+ORANGE: int
+RED: int
+WHITE: int
+NUM_COLORS: int
+NONE: int

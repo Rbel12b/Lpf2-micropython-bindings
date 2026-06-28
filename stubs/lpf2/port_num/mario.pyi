@@ -1,0 +1,4 @@
+GESTURE: int
+BARCODE: int
+PANTS: int
+VOLTAGE: int

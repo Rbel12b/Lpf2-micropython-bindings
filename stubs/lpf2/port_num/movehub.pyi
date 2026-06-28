@@ -1,0 +1,9 @@
+A: int
+B: int
+AB: int
+C: int
+D: int
+LED: int
+TILT: int
+CURRENT: int
+VOLTAGE: int

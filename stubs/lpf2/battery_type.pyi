@@ -1,0 +1,2 @@
+NORMAL: int
+RECHARGEABLE: int
