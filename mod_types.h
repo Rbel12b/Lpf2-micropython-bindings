@@ -46,6 +46,7 @@ static inline mp_obj_t lpf2_cast_to_native_base(mp_obj_t obj, const mp_obj_type_
 #include "Lpf2/Devices/EncoderMotor.hpp"
 #include "Lpf2/Devices/ColorSensor.hpp"
 #include "Lpf2/Devices/DistanceSensor.hpp"
+#include "Lpf2/Devices/HubLED.hpp"
 #if LPF2_HAS_PORT_EXPANDER
 #include "Lpf2/PortExpander/Device.hpp"
 #include "Lpf2/PortExpander/VirtualDevice.hpp"
@@ -199,6 +200,12 @@ typedef struct {
     uint32_t gen;
     mp_obj_t port_ref;
 } mp_obj_lpf2_distance_sensor_t;
+typedef struct {
+    mp_obj_base_t base;
+    std::shared_ptr<Lpf2::DeviceSlot> *slot;
+    uint32_t gen;
+    mp_obj_t port_ref;
+} mp_obj_lpf2_hub_led_t;
 #if LPF2_HAS_PORT_EXPANDER
 typedef struct {
     mp_obj_base_t base;
@@ -211,6 +218,7 @@ extern const mp_obj_type_t lpf2_basic_motor_type;
 extern const mp_obj_type_t lpf2_encoder_motor_type;
 extern const mp_obj_type_t lpf2_color_sensor_type;
 extern const mp_obj_type_t lpf2_distance_sensor_type;
+extern const mp_obj_type_t lpf2_hub_led_type;
 #if LPF2_HAS_PORT_EXPANDER
 extern const mp_obj_type_t lpf2_port_expander_type;
 #endif

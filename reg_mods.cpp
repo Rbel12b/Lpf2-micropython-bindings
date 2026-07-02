@@ -19,6 +19,7 @@ LPF2_DEFINE_MOD_WITH_GLOB(devices,
     LPF2_GET_LPF2_TYPE_REG(encoder_motor),
     LPF2_GET_LPF2_TYPE_REG(color_sensor),
     LPF2_GET_LPF2_TYPE_REG(distance_sensor),
+    LPF2_GET_LPF2_TYPE_REG(hub_led),
 #if LPF2_HAS_PORT_EXPANDER
     LPF2_GET_LPF2_TYPE_REG(port_expander),
 #endif

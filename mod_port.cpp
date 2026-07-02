@@ -46,6 +46,9 @@ static mp_obj_t lpf2_port_make_device_obj(mp_obj_t port_obj_in, Lpf2::Port *port
     if (dev->hasCapability(Lpf2::Devices::TechnicDistanceSensor::CAP))
         return lpf2_make_device_wrapper<mp_obj_lpf2_distance_sensor_t>(
             port_obj_in, &lpf2_distance_sensor_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::HubLED::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_hub_led_t>(
+            port_obj_in, &lpf2_hub_led_type, handle, gen);
 #if LPF2_HAS_PORT_EXPANDER
     if (dev->hasCapability(Lpf2::Devices::PortExpander::CAP))
         return lpf2_make_device_wrapper<mp_obj_lpf2_port_expander_dev_t>(

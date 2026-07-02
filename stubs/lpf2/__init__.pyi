@@ -101,6 +101,7 @@ class port:
         devices.color_sensor,
         devices.distance_sensor,
         devices.port_expander,
+        devices.hub_led,
         None,
     ]: ...
     def writeData(self, mode: int, buf: bytes) -> int: ...

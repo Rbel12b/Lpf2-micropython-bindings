@@ -285,6 +285,64 @@ MP_DEFINE_CONST_OBJ_TYPE(
 #undef GET_DS_CPP
 
 /* ------------------------------------------------------------------ */
+/* hub_led                                                              */
+/* ------------------------------------------------------------------ */
+
+#define SELF_TYPE mp_obj_lpf2_hub_led_t
+#define GET_HL_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::HubLED, SELF_TYPE>(self_in)
+
+DEVICE_DEL(hub_led, SELF_TYPE);
+
+static mp_obj_t lpf2_hub_led_set_color_idx(mp_obj_t self_in, mp_obj_t color_in)
+{
+    GET_HL_CPP(self_in)->setColorIdx((Lpf2::ColorIDX)mp_obj_get_uint(color_in));
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_hub_led_set_color_idx_obj, lpf2_hub_led_set_color_idx);
+
+static mp_obj_t lpf2_hub_led_set_color(size_t n_args, const mp_obj_t *args)
+{
+    GET_HL_CPP(args[0])->setColor(
+        (uint8_t)mp_obj_get_uint(args[1]),
+        (uint8_t)mp_obj_get_uint(args[2]),
+        (uint8_t)mp_obj_get_uint(args[3]));
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_hub_led_set_color_obj, 4, 4, lpf2_hub_led_set_color);
+
+static mp_obj_t lpf2_hub_led_get_device_type(mp_obj_t self_in)
+{
+    return mp_obj_new_int((int)GET_HL_CPP(self_in)->getDeviceType());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_hub_led_get_device_type_obj, lpf2_hub_led_get_device_type);
+
+static mp_obj_t lpf2_hub_led_name(mp_obj_t self_in)
+{
+    const char *n = GET_HL_CPP(self_in)->name();
+    return mp_obj_new_str(n, strlen(n));
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_hub_led_name_obj, lpf2_hub_led_name);
+
+static const mp_rom_map_elem_t lpf2_hub_led_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_hub_led_del_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setColorIdx),   MP_ROM_PTR(&lpf2_hub_led_set_color_idx_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setColor),      MP_ROM_PTR(&lpf2_hub_led_set_color_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_hub_led_get_device_type_obj)},
+    {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_hub_led_name_obj)},
+};
+static MP_DEFINE_CONST_DICT(lpf2_hub_led_locals_dict, lpf2_hub_led_locals_table);
+
+MP_DEFINE_CONST_OBJ_TYPE(
+    lpf2_hub_led_type,
+    MP_QSTR_hub_led,
+    MP_TYPE_FLAG_NONE,
+    locals_dict, &lpf2_hub_led_locals_dict
+);
+
+#undef SELF_TYPE
+#undef GET_HL_CPP
+
+/* ------------------------------------------------------------------ */
 /* port_expander_dev (hardware)                                         */
 /* ------------------------------------------------------------------ */
 
