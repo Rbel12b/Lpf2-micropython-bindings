@@ -343,6 +343,126 @@ MP_DEFINE_CONST_OBJ_TYPE(
 #undef GET_HL_CPP
 
 /* ------------------------------------------------------------------ */
+/* accelerometer                                                        */
+/* ------------------------------------------------------------------ */
+
+#define SELF_TYPE mp_obj_lpf2_accelerometer_t
+#define GET_ACC_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::HubAccelerometer, SELF_TYPE>(self_in)
+
+DEVICE_DEL(accelerometer, SELF_TYPE);
+
+static mp_obj_t lpf2_accelerometer_get_x(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_ACC_CPP(self_in)->getX());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_accelerometer_get_x_obj, lpf2_accelerometer_get_x);
+
+static mp_obj_t lpf2_accelerometer_get_y(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_ACC_CPP(self_in)->getY());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_accelerometer_get_y_obj, lpf2_accelerometer_get_y);
+
+static mp_obj_t lpf2_accelerometer_get_z(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_ACC_CPP(self_in)->getZ());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_accelerometer_get_z_obj, lpf2_accelerometer_get_z);
+
+static mp_obj_t lpf2_accelerometer_get_device_type(mp_obj_t self_in)
+{
+    return mp_obj_new_int((int)GET_ACC_CPP(self_in)->getDeviceType());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_accelerometer_get_device_type_obj, lpf2_accelerometer_get_device_type);
+
+static mp_obj_t lpf2_accelerometer_name(mp_obj_t self_in)
+{
+    const char *n = GET_ACC_CPP(self_in)->name();
+    return mp_obj_new_str(n, strlen(n));
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_accelerometer_name_obj, lpf2_accelerometer_name);
+
+static const mp_rom_map_elem_t lpf2_accelerometer_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_accelerometer_del_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getX),          MP_ROM_PTR(&lpf2_accelerometer_get_x_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getY),          MP_ROM_PTR(&lpf2_accelerometer_get_y_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getZ),          MP_ROM_PTR(&lpf2_accelerometer_get_z_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_accelerometer_get_device_type_obj)},
+    {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_accelerometer_name_obj)},
+};
+static MP_DEFINE_CONST_DICT(lpf2_accelerometer_locals_dict, lpf2_accelerometer_locals_table);
+
+MP_DEFINE_CONST_OBJ_TYPE(
+    lpf2_accelerometer_type,
+    MP_QSTR_accelerometer,
+    MP_TYPE_FLAG_NONE,
+    locals_dict, &lpf2_accelerometer_locals_dict
+);
+
+#undef SELF_TYPE
+#undef GET_ACC_CPP
+
+/* ------------------------------------------------------------------ */
+/* gyroscope                                                            */
+/* ------------------------------------------------------------------ */
+
+#define SELF_TYPE mp_obj_lpf2_gyroscope_t
+#define GET_GYR_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::HubGyroscope, SELF_TYPE>(self_in)
+
+DEVICE_DEL(gyroscope, SELF_TYPE);
+
+static mp_obj_t lpf2_gyroscope_get_x(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_GYR_CPP(self_in)->getX());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_gyroscope_get_x_obj, lpf2_gyroscope_get_x);
+
+static mp_obj_t lpf2_gyroscope_get_y(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_GYR_CPP(self_in)->getY());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_gyroscope_get_y_obj, lpf2_gyroscope_get_y);
+
+static mp_obj_t lpf2_gyroscope_get_z(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_GYR_CPP(self_in)->getZ());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_gyroscope_get_z_obj, lpf2_gyroscope_get_z);
+
+static mp_obj_t lpf2_gyroscope_get_device_type(mp_obj_t self_in)
+{
+    return mp_obj_new_int((int)GET_GYR_CPP(self_in)->getDeviceType());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_gyroscope_get_device_type_obj, lpf2_gyroscope_get_device_type);
+
+static mp_obj_t lpf2_gyroscope_name(mp_obj_t self_in)
+{
+    const char *n = GET_GYR_CPP(self_in)->name();
+    return mp_obj_new_str(n, strlen(n));
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_gyroscope_name_obj, lpf2_gyroscope_name);
+
+static const mp_rom_map_elem_t lpf2_gyroscope_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_gyroscope_del_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getX),          MP_ROM_PTR(&lpf2_gyroscope_get_x_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getY),          MP_ROM_PTR(&lpf2_gyroscope_get_y_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getZ),          MP_ROM_PTR(&lpf2_gyroscope_get_z_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_gyroscope_get_device_type_obj)},
+    {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_gyroscope_name_obj)},
+};
+static MP_DEFINE_CONST_DICT(lpf2_gyroscope_locals_dict, lpf2_gyroscope_locals_table);
+
+MP_DEFINE_CONST_OBJ_TYPE(
+    lpf2_gyroscope_type,
+    MP_QSTR_gyroscope,
+    MP_TYPE_FLAG_NONE,
+    locals_dict, &lpf2_gyroscope_locals_dict
+);
+
+#undef SELF_TYPE
+#undef GET_GYR_CPP
+
+/* ------------------------------------------------------------------ */
 /* port_expander_dev (hardware)                                         */
 /* ------------------------------------------------------------------ */
 

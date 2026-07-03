@@ -49,6 +49,12 @@ static mp_obj_t lpf2_port_make_device_obj(mp_obj_t port_obj_in, Lpf2::Port *port
     if (dev->hasCapability(Lpf2::Devices::HubLED::CAP))
         return lpf2_make_device_wrapper<mp_obj_lpf2_hub_led_t>(
             port_obj_in, &lpf2_hub_led_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::HubAccelerometer::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_accelerometer_t>(
+            port_obj_in, &lpf2_accelerometer_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::HubGyroscope::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_gyroscope_t>(
+            port_obj_in, &lpf2_gyroscope_type, handle, gen);
 #if LPF2_HAS_PORT_EXPANDER
     if (dev->hasCapability(Lpf2::Devices::PortExpander::CAP))
         return lpf2_make_device_wrapper<mp_obj_lpf2_port_expander_dev_t>(
