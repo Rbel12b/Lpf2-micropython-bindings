@@ -7,7 +7,9 @@ Provides the `lpf2` module: local + virtual ports, hub emulation, device descrip
 ## Requirements
 
 - MicroPython source tree (ESP-IDF port), cloned as a sibling
-- The [`Lpf2`](https://github.com/Rbel12b/Lpf2) C++ library, cloned as a sibling
+- The [`Lpf2`](https://github.com/Rbel12b/Lpf2) C++ library, cloned as a sibling.
+
+  Becaue of the ongoing development of the Lpf2 library, it is recommended to match the version of the Lpf2 library with the version of the bindings. (For example, if you are using the `v2.5.0` release of the Lpf2 library, you should use the `v2.5.0` release/tag of the bindings as well.)
 - ESP-IDF 5.5.x
 
 ## Use as a Git submodule
