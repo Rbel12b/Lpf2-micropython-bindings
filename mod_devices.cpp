@@ -201,16 +201,21 @@ static mp_obj_t lpf2_color_sensor_get_reflectivity(mp_obj_t self_in)
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_sensor_get_reflectivity_obj, lpf2_color_sensor_get_reflectivity);
 
+static mp_obj_t lpf2_color_sensor_get_ambient_light(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_CS_CPP(self_in)->getAmbientLight());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_sensor_get_ambient_light_obj, lpf2_color_sensor_get_ambient_light);
+
 static mp_obj_t lpf2_color_sensor_get_rgb(mp_obj_t self_in)
 {
-    uint16_t r, g, b, i;
-    GET_CS_CPP(self_in)->getRGB(r, g, b, i);
-    mp_obj_t tup = mp_obj_new_tuple(4, nullptr);
+    uint16_t r, g, b;
+    GET_CS_CPP(self_in)->getRGB(r, g, b);
+    mp_obj_t tup = mp_obj_new_tuple(3, nullptr);
     mp_obj_tuple_t *t = (mp_obj_tuple_t *)MP_OBJ_TO_PTR(tup);
     t->items[0] = mp_obj_new_int(r);
     t->items[1] = mp_obj_new_int(g);
     t->items[2] = mp_obj_new_int(b);
-    t->items[3] = mp_obj_new_int(i);
     return tup;
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_sensor_get_rgb_obj, lpf2_color_sensor_get_rgb);
@@ -264,6 +269,7 @@ static const mp_rom_map_elem_t lpf2_color_sensor_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR___del__),         MP_ROM_PTR(&lpf2_color_sensor_del_obj)},
     {MP_ROM_QSTR(MP_QSTR_getColorIdx),     MP_ROM_PTR(&lpf2_color_sensor_get_color_idx_obj)},
     {MP_ROM_QSTR(MP_QSTR_getReflectivity), MP_ROM_PTR(&lpf2_color_sensor_get_reflectivity_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getAmbientLight), MP_ROM_PTR(&lpf2_color_sensor_get_ambient_light_obj)},
     {MP_ROM_QSTR(MP_QSTR_getRGB),          MP_ROM_PTR(&lpf2_color_sensor_get_rgb_obj)},
     {MP_ROM_QSTR(MP_QSTR_getHSV),          MP_ROM_PTR(&lpf2_color_sensor_get_hsv_obj)},
     {MP_ROM_QSTR(MP_QSTR_setLight),        MP_ROM_PTR(&lpf2_color_sensor_set_light_obj)},
