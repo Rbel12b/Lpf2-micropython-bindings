@@ -332,6 +332,103 @@ MP_DEFINE_CONST_OBJ_TYPE(
 #undef GET_DS_CPP
 
 /* ------------------------------------------------------------------ */
+/* color_distance_sensor                                                */
+/* ------------------------------------------------------------------ */
+
+#define SELF_TYPE mp_obj_lpf2_color_distance_sensor_t
+#define GET_CDS_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::ColorDistanceSensor, SELF_TYPE>(self_in)
+
+DEVICE_DEL(color_distance_sensor, SELF_TYPE);
+
+static mp_obj_t lpf2_color_distance_sensor_get_color_idx(mp_obj_t self_in)
+{
+    return mp_obj_new_int((int)GET_CDS_CPP(self_in)->getColorIdx());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_color_idx_obj, lpf2_color_distance_sensor_get_color_idx);
+
+static mp_obj_t lpf2_color_distance_sensor_get_distance(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_CDS_CPP(self_in)->getDistance());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_distance_obj, lpf2_color_distance_sensor_get_distance);
+
+static mp_obj_t lpf2_color_distance_sensor_get_reflected_light(mp_obj_t self_in)
+{
+    return mp_obj_new_int(GET_CDS_CPP(self_in)->getReflectedLight());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_reflected_light_obj, lpf2_color_distance_sensor_get_reflected_light);
+
+static mp_obj_t lpf2_color_distance_sensor_get_ambient_light(mp_obj_t self_in)
+{
+    return mp_obj_new_int(GET_CDS_CPP(self_in)->getAmbientLight());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_ambient_light_obj, lpf2_color_distance_sensor_get_ambient_light);
+
+static mp_obj_t lpf2_color_distance_sensor_get_rgb(mp_obj_t self_in)
+{
+    uint16_t r, g, b;
+    GET_CDS_CPP(self_in)->getRgb(r, g, b);
+    mp_obj_t tup = mp_obj_new_tuple(3, nullptr);
+    mp_obj_tuple_t *t = (mp_obj_tuple_t *)MP_OBJ_TO_PTR(tup);
+    t->items[0] = mp_obj_new_int(r);
+    t->items[1] = mp_obj_new_int(g);
+    t->items[2] = mp_obj_new_int(b);
+    return tup;
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_rgb_obj, lpf2_color_distance_sensor_get_rgb);
+
+static mp_obj_t lpf2_color_distance_sensor_set_ir_tx(mp_obj_t self_in, mp_obj_t value_in)
+{
+    GET_CDS_CPP(self_in)->setIrTx((uint16_t)mp_obj_get_uint(value_in));
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_color_distance_sensor_set_ir_tx_obj, lpf2_color_distance_sensor_set_ir_tx);
+
+static mp_obj_t lpf2_color_distance_sensor_set_led_color(mp_obj_t self_in, mp_obj_t color_in)
+{
+    GET_CDS_CPP(self_in)->setLedColor((Lpf2::ColorIDX)mp_obj_get_uint(color_in));
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_color_distance_sensor_set_led_color_obj, lpf2_color_distance_sensor_set_led_color);
+
+static mp_obj_t lpf2_color_distance_sensor_get_device_type(mp_obj_t self_in)
+{
+    return mp_obj_new_int((int)GET_CDS_CPP(self_in)->getDeviceType());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_device_type_obj, lpf2_color_distance_sensor_get_device_type);
+
+static mp_obj_t lpf2_color_distance_sensor_name(mp_obj_t self_in)
+{
+    const char *n = GET_CDS_CPP(self_in)->name();
+    return mp_obj_new_str(n, strlen(n));
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_name_obj, lpf2_color_distance_sensor_name);
+
+static const mp_rom_map_elem_t lpf2_color_distance_sensor_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),          MP_ROM_PTR(&lpf2_color_distance_sensor_del_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getColorIdx),      MP_ROM_PTR(&lpf2_color_distance_sensor_get_color_idx_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDistance),      MP_ROM_PTR(&lpf2_color_distance_sensor_get_distance_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getReflectedLight),MP_ROM_PTR(&lpf2_color_distance_sensor_get_reflected_light_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getAmbientLight),  MP_ROM_PTR(&lpf2_color_distance_sensor_get_ambient_light_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getRgb),           MP_ROM_PTR(&lpf2_color_distance_sensor_get_rgb_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setIrTx),          MP_ROM_PTR(&lpf2_color_distance_sensor_set_ir_tx_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setLedColor),      MP_ROM_PTR(&lpf2_color_distance_sensor_set_led_color_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDeviceType),    MP_ROM_PTR(&lpf2_color_distance_sensor_get_device_type_obj)},
+    {MP_ROM_QSTR(MP_QSTR_name),             MP_ROM_PTR(&lpf2_color_distance_sensor_name_obj)},
+};
+static MP_DEFINE_CONST_DICT(lpf2_color_distance_sensor_locals_dict, lpf2_color_distance_sensor_locals_table);
+
+MP_DEFINE_CONST_OBJ_TYPE(
+    lpf2_color_distance_sensor_type,
+    MP_QSTR_color_distance_sensor,
+    MP_TYPE_FLAG_NONE,
+    locals_dict, &lpf2_color_distance_sensor_locals_dict
+);
+
+#undef SELF_TYPE
+#undef GET_CDS_CPP
+
+/* ------------------------------------------------------------------ */
 /* hub_led                                                              */
 /* ------------------------------------------------------------------ */
 

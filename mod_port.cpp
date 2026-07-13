@@ -40,6 +40,9 @@ static mp_obj_t lpf2_port_make_device_obj(mp_obj_t port_obj_in, Lpf2::Port *port
     if (dev->hasCapability(Lpf2::Devices::BasicMotor::CAP))
         return lpf2_make_device_wrapper<mp_obj_lpf2_basic_motor_t>(
             port_obj_in, &lpf2_basic_motor_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::ColorDistanceSensor::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_color_distance_sensor_t>(
+            port_obj_in, &lpf2_color_distance_sensor_type, handle, gen);
     if (dev->hasCapability(Lpf2::Devices::TechnicColorSensor::CAP))
         return lpf2_make_device_wrapper<mp_obj_lpf2_color_sensor_t>(
             port_obj_in, &lpf2_color_sensor_type, handle, gen);
