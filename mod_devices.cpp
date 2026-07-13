@@ -238,6 +238,15 @@ static mp_obj_t lpf2_color_sensor_set_light(size_t n_args, const mp_obj_t *args)
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_color_sensor_set_light_obj, 4, 4, lpf2_color_sensor_set_light);
 
+static mp_obj_t lpf2_color_sensor_set_mode(size_t n_args, const mp_obj_t *args)
+{
+    uint8_t modeNum = (uint8_t)mp_obj_get_uint(args[1]);
+    float   delta   = n_args > 2 ? mp_obj_get_float(args[2]) : 1.0f;
+    GET_CS_CPP(args[0])->setMode(modeNum, delta);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_color_sensor_set_mode_obj, 2, 3, lpf2_color_sensor_set_mode);
+
 static mp_obj_t lpf2_color_sensor_get_device_type(mp_obj_t self_in)
 {
     return mp_obj_new_int((int)GET_CS_CPP(self_in)->getDeviceType());
@@ -258,8 +267,15 @@ static const mp_rom_map_elem_t lpf2_color_sensor_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR_getRGB),          MP_ROM_PTR(&lpf2_color_sensor_get_rgb_obj)},
     {MP_ROM_QSTR(MP_QSTR_getHSV),          MP_ROM_PTR(&lpf2_color_sensor_get_hsv_obj)},
     {MP_ROM_QSTR(MP_QSTR_setLight),        MP_ROM_PTR(&lpf2_color_sensor_set_light_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setMode),         MP_ROM_PTR(&lpf2_color_sensor_set_mode_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDeviceType),   MP_ROM_PTR(&lpf2_color_sensor_get_device_type_obj)},
     {MP_ROM_QSTR(MP_QSTR_name),            MP_ROM_PTR(&lpf2_color_sensor_name_obj)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_COLOR),      MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_COLOR)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_REFLT),      MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_REFLT)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_AMBI),       MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_AMBI)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_LIGHT),      MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_LIGHT)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_RGB),        MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_RGB)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_HSV),        MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_HSV)},
 };
 static MP_DEFINE_CONST_DICT(lpf2_color_sensor_locals_dict, lpf2_color_sensor_locals_table);
 
@@ -299,6 +315,15 @@ static mp_obj_t lpf2_distance_sensor_get_distance(mp_obj_t self_in)
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_distance_sensor_get_distance_obj, lpf2_distance_sensor_get_distance);
 
+static mp_obj_t lpf2_distance_sensor_set_mode(size_t n_args, const mp_obj_t *args)
+{
+    uint8_t modeNum = (uint8_t)mp_obj_get_uint(args[1]);
+    float   delta   = n_args > 2 ? mp_obj_get_float(args[2]) : 1.0f;
+    GET_DS_CPP(args[0])->setMode(modeNum, delta);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_distance_sensor_set_mode_obj, 2, 3, lpf2_distance_sensor_set_mode);
+
 static mp_obj_t lpf2_distance_sensor_get_device_type(mp_obj_t self_in)
 {
     return mp_obj_new_int((int)GET_DS_CPP(self_in)->getDeviceType());
@@ -316,8 +341,10 @@ static const mp_rom_map_elem_t lpf2_distance_sensor_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_distance_sensor_del_obj)},
     {MP_ROM_QSTR(MP_QSTR_setLight),      MP_ROM_PTR(&lpf2_distance_sensor_set_light_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDistance),   MP_ROM_PTR(&lpf2_distance_sensor_get_distance_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setMode),       MP_ROM_PTR(&lpf2_distance_sensor_set_mode_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_distance_sensor_get_device_type_obj)},
     {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_distance_sensor_name_obj)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_LIGHT),    MP_ROM_INT(Lpf2::Devices::TechnicDistanceSensor::MODE_LIGHT)},
 };
 static MP_DEFINE_CONST_DICT(lpf2_distance_sensor_locals_dict, lpf2_distance_sensor_locals_table);
 
@@ -354,7 +381,7 @@ static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_distance_obj, lp
 
 static mp_obj_t lpf2_color_distance_sensor_get_reflected_light(mp_obj_t self_in)
 {
-    return mp_obj_new_int(GET_CDS_CPP(self_in)->getReflectedLight());
+    return mp_obj_new_int(GET_CDS_CPP(self_in)->getReflectivity());
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_reflected_light_obj, lpf2_color_distance_sensor_get_reflected_light);
 
@@ -367,7 +394,7 @@ static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_ambient_light_ob
 static mp_obj_t lpf2_color_distance_sensor_get_rgb(mp_obj_t self_in)
 {
     uint16_t r, g, b;
-    GET_CDS_CPP(self_in)->getRgb(r, g, b);
+    GET_CDS_CPP(self_in)->getRGB(r, g, b);
     mp_obj_t tup = mp_obj_new_tuple(3, nullptr);
     mp_obj_tuple_t *t = (mp_obj_tuple_t *)MP_OBJ_TO_PTR(tup);
     t->items[0] = mp_obj_new_int(r);
@@ -391,6 +418,15 @@ static mp_obj_t lpf2_color_distance_sensor_set_led_color(mp_obj_t self_in, mp_ob
 }
 static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_color_distance_sensor_set_led_color_obj, lpf2_color_distance_sensor_set_led_color);
 
+static mp_obj_t lpf2_color_distance_sensor_set_mode(size_t n_args, const mp_obj_t *args)
+{
+    uint8_t modeNum = (uint8_t)mp_obj_get_uint(args[1]);
+    float   delta   = n_args > 2 ? mp_obj_get_float(args[2]) : 1.0f;
+    GET_CDS_CPP(args[0])->setMode(modeNum, delta);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_color_distance_sensor_set_mode_obj, 2, 3, lpf2_color_distance_sensor_set_mode);
+
 static mp_obj_t lpf2_color_distance_sensor_get_device_type(mp_obj_t self_in)
 {
     return mp_obj_new_int((int)GET_CDS_CPP(self_in)->getDeviceType());
@@ -413,8 +449,16 @@ static const mp_rom_map_elem_t lpf2_color_distance_sensor_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR_getRgb),           MP_ROM_PTR(&lpf2_color_distance_sensor_get_rgb_obj)},
     {MP_ROM_QSTR(MP_QSTR_setIrTx),          MP_ROM_PTR(&lpf2_color_distance_sensor_set_ir_tx_obj)},
     {MP_ROM_QSTR(MP_QSTR_setLedColor),      MP_ROM_PTR(&lpf2_color_distance_sensor_set_led_color_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setMode),          MP_ROM_PTR(&lpf2_color_distance_sensor_set_mode_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDeviceType),    MP_ROM_PTR(&lpf2_color_distance_sensor_get_device_type_obj)},
     {MP_ROM_QSTR(MP_QSTR_name),             MP_ROM_PTR(&lpf2_color_distance_sensor_name_obj)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_COLOR),       MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_COLOR)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_DIST),        MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_DIST)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_REFLT),       MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_REFLT)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_AMBI),        MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_AMBI)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_LED),         MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_LED)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_RGB),         MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_RGB)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_IR),          MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_IR)},
 };
 static MP_DEFINE_CONST_DICT(lpf2_color_distance_sensor_locals_dict, lpf2_color_distance_sensor_locals_table);
 
