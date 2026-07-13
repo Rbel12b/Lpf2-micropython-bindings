@@ -44,6 +44,41 @@ static inline mp_obj_t lpf2_cast_to_native_base(mp_obj_t obj, const mp_obj_type_
 #include "Lpf2/Hub.hpp"
 #include "Lpf2/HubEmulation.hpp"
 #include "Lpf2/DeviceManager.hpp"
+#include <vector>
+#include <algorithm>
+
+// Registry of live, Python-created C++ objects that need periodic update().
+// One vector per base type T. Central lpf2_update_all() iterates each.
+// Built-in local ports (constructed C++-side, e.g. hub.ports.A) are NOT
+// registered — they're pumped by Ports::update() in hub_main.cpp.
+template <typename T>
+inline std::vector<T *> &lpf2_reg()
+{
+    static std::vector<T *> v;
+    return v;
+}
+
+template <typename T>
+inline void lpf2_reg_add(T *p)
+{
+    if (p) lpf2_reg<T>().push_back(p);
+}
+
+template <typename T>
+inline void lpf2_reg_remove(T *p)
+{
+    auto &v = lpf2_reg<T>();
+    v.erase(std::remove(v.begin(), v.end(), p), v.end());
+}
+
+template <typename T>
+inline void lpf2_reg_update_all()
+{
+    for (auto *p : lpf2_reg<T>()) if (p) p->update();
+}
+
+extern "C" void lpf2_update_all(void);
+
 #include "Lpf2/Devices/BasicMotor.hpp"
 #include "Lpf2/Devices/EncoderMotor.hpp"
 #include "Lpf2/Devices/ColorSensor.hpp"

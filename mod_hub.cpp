@@ -1,28 +1,10 @@
 #include "mod_types.h"
-#include <vector>
-#include <algorithm>
 
 #define DEFINE_HUB_METHOD(name, method, fun_obj_def) LPF2_DEFINE_METHOD(hub_##name, method, fun_obj_def)
 #define DEFINE_HUB_METHOD_VAR_BETWEEN(name, method, min_args, max_args) LPF2_DEFINE_METHOD_VAR_BETWEEN(hub_##name, method, min_args, max_args)
 #define GET_HUB_METHOD_OBJ(name) LPF2_GET_METHOD_OBJ(hub_##name)
 
 #define SELF_TYPE mp_obj_lpf2_hub_t
-
-// Registry of live Lpf2::Hub instances so the app
-// loop can call it instead of calling it from MicroPython
-static std::vector<Lpf2::Hub *> &lpf2_hub_registry()
-{
-    static std::vector<Lpf2::Hub *> reg;
-    return reg;
-}
-
-extern "C" void lpf2_hub_update_all(void)
-{
-    auto &reg = lpf2_hub_registry();
-    for (auto *h : reg) {
-        if (h) h->update();
-    }
-}
 
 extern "C" {
 
@@ -36,7 +18,7 @@ static mp_obj_t lpf2_hub_make_new(const mp_obj_type_t *type,
     o->cpp_obj = new Lpf2::Hub();
     o->owned = true;
     o->port_cache = mp_obj_new_dict(0);
-    lpf2_hub_registry().push_back(o->cpp_obj);
+    lpf2_reg_add<Lpf2::Hub>(o->cpp_obj);
     return MP_OBJ_FROM_PTR(o);
 }
 
@@ -222,8 +204,7 @@ DEFINE_HUB_METHOD(del, (mp_obj_t self_in)
     auto self = GET_SELF();
     LPF2_LOG_V("Deleting Hub, owner: %s", self->owned ? "true" : "false");
     if (self->cpp_obj) {
-        auto &reg = lpf2_hub_registry();
-        reg.erase(std::remove(reg.begin(), reg.end(), self->cpp_obj), reg.end());
+        lpf2_reg_remove<Lpf2::Hub>(self->cpp_obj);
     }
     if (self->owned && self->cpp_obj) {
         delete self->cpp_obj;

@@ -2,7 +2,15 @@
 
 extern "C" {
 
-LPF2_MOD_EXTERN(hub_property);
+// Central hook — call from board loop. Pumps every registered
+// Python-created C++ object that has an update() method.
+// HubEmulation is excluded: it runs its own FreeRTOS task.
+extern "C" void lpf2_update_all(void)
+{
+    lpf2_reg_update_all<Lpf2::Hub>();
+    lpf2_reg_update_all<Lpf2::Port>();
+    lpf2_reg_update_all<Lpf2::Virtual::Device>();
+}
 
 /* --- lpf2.local --- */
 LPF2_DEFINE_MOD_WITH_GLOB(local,

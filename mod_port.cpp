@@ -80,6 +80,7 @@ static mp_obj_t lpf2_port_make_new(const mp_obj_type_t *type,
     o->is_trampoline = true;
     o->owned = true;
     o->parent_ref = MP_OBJ_NULL;
+    lpf2_reg_add<Lpf2::Port>(o->cpp_obj);
 
     return MP_OBJ_FROM_PTR(o);
 }
@@ -373,6 +374,7 @@ DEFINE_PORT_METHOD(del, (mp_obj_t self_in)
     LPF2_LOG_V("Deleting Port, owner: %s", self->owned ? "true" : "false");
     if (self->owned && self->cpp_obj)
     {
+        lpf2_reg_remove<Lpf2::Port>(self->cpp_obj);
         delete self->cpp_obj;
         self->cpp_obj = nullptr;
     }

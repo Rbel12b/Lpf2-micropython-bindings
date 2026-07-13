@@ -22,6 +22,7 @@ static mp_obj_t lpf2_virtual_port_expander_device_make_new(const mp_obj_type_t *
     o->owned = true;
     for (int i = 0; i < 4; ++i)
         o->port_refs[i] = MP_OBJ_NULL;
+    lpf2_reg_add<Lpf2::Virtual::Device>(o->cpp_obj);
 
     return MP_OBJ_FROM_PTR(o);
 }
@@ -32,6 +33,7 @@ DEFINE_VPED_METHOD(del, (mp_obj_t self_in)
     LPF2_LOG_V("Deleting Virtual PortExpanderDevice, owner: %s", self->owned ? "true" : "false");
     if (self->owned && self->cpp_obj)
     {
+        lpf2_reg_remove<Lpf2::Virtual::Device>(self->cpp_obj);
         delete self->cpp_obj;
         self->cpp_obj = nullptr;
     }
