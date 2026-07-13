@@ -304,6 +304,7 @@ extern const mp_obj_fun_builtin_fixed_t lpf2_devices_register_default_obj;
 
 LPF2_MOD_EXTERN(color);
 LPF2_MOD_EXTERN(hub_type);
+LPF2_MOD_EXTERN(hub_property);
 LPF2_MOD_EXTERN(device_type);
 LPF2_MOD_EXTERN(battery_type);
 LPF2_MOD_EXTERN(alerts);
