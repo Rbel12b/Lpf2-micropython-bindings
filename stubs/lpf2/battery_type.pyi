@@ -1,2 +1,2 @@
-NORMAL: int
-RECHARGEABLE: int
+NORMAL: int = 0x00
+RECHARGEABLE: int = 0x01

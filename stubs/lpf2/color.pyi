@@ -1,13 +1,13 @@
-BLACK: int
-PINK: int
-PURPLE: int
-BLUE: int
-LIGHTBLUE: int
-CYAN: int
-GREEN: int
-YELLOW: int
-ORANGE: int
-RED: int
-WHITE: int
-NUM_COLORS: int
-NONE: int
+BLACK: int = 0
+PINK: int = 1
+PURPLE: int = 2
+BLUE: int = 3
+LIGHTBLUE: int = 4
+CYAN: int = 5
+GREEN: int = 6
+YELLOW: int = 7
+ORANGE: int = 8
+RED: int = 9
+WHITE: int = 10
+NUM_COLORS: int = 11
+NONE: int = 255

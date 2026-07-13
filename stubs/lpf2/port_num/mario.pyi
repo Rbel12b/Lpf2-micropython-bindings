@@ -1,4 +1,4 @@
-GESTURE: int
-BARCODE: int
-PANTS: int
-VOLTAGE: int
+GESTURE: int = 0x00
+BARCODE: int = 0x01
+PANTS: int = 0x02
+VOLTAGE: int = 0x06
