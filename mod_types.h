@@ -40,6 +40,8 @@ static inline mp_obj_t lpf2_cast_to_native_base(mp_obj_t obj, const mp_obj_type_
 #include "Lpf2/LWPConst.hpp"
 #include "Lpf2/Virtual/Port.hpp"
 #include "Lpf2/Virtual/Device.hpp"
+#include "Lpf2/Remote/Port.hpp"
+#include "Lpf2/Hub.hpp"
 #include "Lpf2/HubEmulation.hpp"
 #include "Lpf2/DeviceManager.hpp"
 #include "Lpf2/Devices/BasicMotor.hpp"
@@ -118,6 +120,15 @@ typedef struct _mp_obj_lpf2_port_t
 } mp_obj_lpf2_port_t;
 extern const mp_obj_type_t lpf2_port_type;
 extern const mp_obj_type_t lpf2_local_port_type;
+
+typedef struct _mp_obj_lpf2_hub_t
+{
+    mp_obj_base_t base;
+    Lpf2::Hub *cpp_obj = nullptr;
+    bool owned = false;
+    mp_obj_t port_cache; // dict PortNum(int) -> port wrapper; identity + GC anchor
+} mp_obj_lpf2_hub_t;
+extern const mp_obj_type_t lpf2_hub_type;
 
 typedef struct _mp_obj_lpf2_virtual_port_t
 {
