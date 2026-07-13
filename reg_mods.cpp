@@ -2,6 +2,16 @@
 
 extern "C" {
 
+// Central hook — call from board loop. Pumps every registered
+// Python-created C++ object that has an update() method.
+// HubEmulation is excluded: it runs its own FreeRTOS task.
+extern "C" void lpf2_update_all(void)
+{
+    lpf2_reg_update_all<Lpf2::Hub>();
+    lpf2_reg_update_all<Lpf2::Port>();
+    lpf2_reg_update_all<Lpf2::Virtual::Device>();
+}
+
 /* --- lpf2.local --- */
 LPF2_DEFINE_MOD_WITH_GLOB(local,
     { MP_ROM_QSTR(MP_QSTR_port), MP_ROM_PTR(&lpf2_local_port_type) }
@@ -19,6 +29,10 @@ LPF2_DEFINE_MOD_WITH_GLOB(devices,
     LPF2_GET_LPF2_TYPE_REG(encoder_motor),
     LPF2_GET_LPF2_TYPE_REG(color_sensor),
     LPF2_GET_LPF2_TYPE_REG(distance_sensor),
+    LPF2_GET_LPF2_TYPE_REG(color_distance_sensor),
+    LPF2_GET_LPF2_TYPE_REG(hub_led),
+    LPF2_GET_LPF2_TYPE_REG(accelerometer),
+    LPF2_GET_LPF2_TYPE_REG(gyroscope),
 #if LPF2_HAS_PORT_EXPANDER
     LPF2_GET_LPF2_TYPE_REG(port_expander),
 #endif
@@ -52,6 +66,7 @@ LPF2_DEFINE_MOD_WITH_GLOB_ATTR_USED(lpf2,
     LPF2_GET_LPF2_MOD_REG(port_num),
     LPF2_GET_LPF2_MOD_REG(motor_setting),
     LPF2_GET_LPF2_MOD_REG(battery),
+    LPF2_GET_LPF2_MOD_REG(hub_property),
     LPF2_GET_LPF2_MOD_REG(local),
     LPF2_GET_LPF2_MOD_REG(virtual),
     LPF2_GET_LPF2_MOD_REG(devices),
@@ -63,6 +78,7 @@ LPF2_DEFINE_MOD_WITH_GLOB_ATTR_USED(lpf2,
     LPF2_GET_LPF2_TYPE_REG(version),
     LPF2_GET_LPF2_TYPE_REG(hub_emulation),
     LPF2_GET_LPF2_TYPE_REG(device_descriptor),
+    LPF2_GET_LPF2_TYPE_REG(hub),
 );
 
 MP_REGISTER_MODULE(MP_QSTR_lpf2, LPF2_GET_MOD(lpf2));

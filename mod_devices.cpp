@@ -195,6 +195,63 @@ static mp_obj_t lpf2_color_sensor_get_color_idx(mp_obj_t self_in)
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_sensor_get_color_idx_obj, lpf2_color_sensor_get_color_idx);
 
+static mp_obj_t lpf2_color_sensor_get_reflectivity(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_CS_CPP(self_in)->getReflectivity());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_sensor_get_reflectivity_obj, lpf2_color_sensor_get_reflectivity);
+
+static mp_obj_t lpf2_color_sensor_get_ambient_light(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_CS_CPP(self_in)->getAmbientLight());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_sensor_get_ambient_light_obj, lpf2_color_sensor_get_ambient_light);
+
+static mp_obj_t lpf2_color_sensor_get_rgb(mp_obj_t self_in)
+{
+    uint16_t r, g, b;
+    GET_CS_CPP(self_in)->getRGB(r, g, b);
+    mp_obj_t tup = mp_obj_new_tuple(3, nullptr);
+    mp_obj_tuple_t *t = (mp_obj_tuple_t *)MP_OBJ_TO_PTR(tup);
+    t->items[0] = mp_obj_new_int(r);
+    t->items[1] = mp_obj_new_int(g);
+    t->items[2] = mp_obj_new_int(b);
+    return tup;
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_sensor_get_rgb_obj, lpf2_color_sensor_get_rgb);
+
+static mp_obj_t lpf2_color_sensor_get_hsv(mp_obj_t self_in)
+{
+    uint16_t h, s, v;
+    GET_CS_CPP(self_in)->getHSV(h, s, v);
+    mp_obj_t tup = mp_obj_new_tuple(3, nullptr);
+    mp_obj_tuple_t *t = (mp_obj_tuple_t *)MP_OBJ_TO_PTR(tup);
+    t->items[0] = mp_obj_new_int(h);
+    t->items[1] = mp_obj_new_int(s);
+    t->items[2] = mp_obj_new_int(v);
+    return tup;
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_sensor_get_hsv_obj, lpf2_color_sensor_get_hsv);
+
+static mp_obj_t lpf2_color_sensor_set_light(size_t n_args, const mp_obj_t *args)
+{
+    GET_CS_CPP(args[0])->setLight(
+        (uint8_t)mp_obj_get_uint(args[1]),
+        (uint8_t)mp_obj_get_uint(args[2]),
+        (uint8_t)mp_obj_get_uint(args[3]));
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_color_sensor_set_light_obj, 4, 4, lpf2_color_sensor_set_light);
+
+static mp_obj_t lpf2_color_sensor_set_mode(size_t n_args, const mp_obj_t *args)
+{
+    uint8_t modeNum = (uint8_t)mp_obj_get_uint(args[1]);
+    float   delta   = n_args > 2 ? mp_obj_get_float(args[2]) : 1.0f;
+    GET_CS_CPP(args[0])->setMode(modeNum, delta);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_color_sensor_set_mode_obj, 2, 3, lpf2_color_sensor_set_mode);
+
 static mp_obj_t lpf2_color_sensor_get_device_type(mp_obj_t self_in)
 {
     return mp_obj_new_int((int)GET_CS_CPP(self_in)->getDeviceType());
@@ -209,10 +266,22 @@ static mp_obj_t lpf2_color_sensor_name(mp_obj_t self_in)
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_sensor_name_obj, lpf2_color_sensor_name);
 
 static const mp_rom_map_elem_t lpf2_color_sensor_locals_table[] = {
-    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_color_sensor_del_obj)},
-    {MP_ROM_QSTR(MP_QSTR_getColorIdx),   MP_ROM_PTR(&lpf2_color_sensor_get_color_idx_obj)},
-    {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_color_sensor_get_device_type_obj)},
-    {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_color_sensor_name_obj)},
+    {MP_ROM_QSTR(MP_QSTR___del__),         MP_ROM_PTR(&lpf2_color_sensor_del_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getColorIdx),     MP_ROM_PTR(&lpf2_color_sensor_get_color_idx_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getReflectivity), MP_ROM_PTR(&lpf2_color_sensor_get_reflectivity_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getAmbientLight), MP_ROM_PTR(&lpf2_color_sensor_get_ambient_light_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getRGB),          MP_ROM_PTR(&lpf2_color_sensor_get_rgb_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getHSV),          MP_ROM_PTR(&lpf2_color_sensor_get_hsv_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setLight),        MP_ROM_PTR(&lpf2_color_sensor_set_light_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setMode),         MP_ROM_PTR(&lpf2_color_sensor_set_mode_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDeviceType),   MP_ROM_PTR(&lpf2_color_sensor_get_device_type_obj)},
+    {MP_ROM_QSTR(MP_QSTR_name),            MP_ROM_PTR(&lpf2_color_sensor_name_obj)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_COLOR),      MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_COLOR)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_REFLT),      MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_REFLT)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_AMBI),       MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_AMBI)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_LIGHT),      MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_LIGHT)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_RGB),        MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_RGB)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_HSV),        MP_ROM_INT(Lpf2::Devices::TechnicColorSensor::MODE_HSV)},
 };
 static MP_DEFINE_CONST_DICT(lpf2_color_sensor_locals_dict, lpf2_color_sensor_locals_table);
 
@@ -252,6 +321,15 @@ static mp_obj_t lpf2_distance_sensor_get_distance(mp_obj_t self_in)
 }
 static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_distance_sensor_get_distance_obj, lpf2_distance_sensor_get_distance);
 
+static mp_obj_t lpf2_distance_sensor_set_mode(size_t n_args, const mp_obj_t *args)
+{
+    uint8_t modeNum = (uint8_t)mp_obj_get_uint(args[1]);
+    float   delta   = n_args > 2 ? mp_obj_get_float(args[2]) : 1.0f;
+    GET_DS_CPP(args[0])->setMode(modeNum, delta);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_distance_sensor_set_mode_obj, 2, 3, lpf2_distance_sensor_set_mode);
+
 static mp_obj_t lpf2_distance_sensor_get_device_type(mp_obj_t self_in)
 {
     return mp_obj_new_int((int)GET_DS_CPP(self_in)->getDeviceType());
@@ -269,8 +347,10 @@ static const mp_rom_map_elem_t lpf2_distance_sensor_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_distance_sensor_del_obj)},
     {MP_ROM_QSTR(MP_QSTR_setLight),      MP_ROM_PTR(&lpf2_distance_sensor_set_light_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDistance),   MP_ROM_PTR(&lpf2_distance_sensor_get_distance_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setMode),       MP_ROM_PTR(&lpf2_distance_sensor_set_mode_obj)},
     {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_distance_sensor_get_device_type_obj)},
     {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_distance_sensor_name_obj)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_LIGHT),    MP_ROM_INT(Lpf2::Devices::TechnicDistanceSensor::MODE_LIGHT)},
 };
 static MP_DEFINE_CONST_DICT(lpf2_distance_sensor_locals_dict, lpf2_distance_sensor_locals_table);
 
@@ -283,6 +363,298 @@ MP_DEFINE_CONST_OBJ_TYPE(
 
 #undef SELF_TYPE
 #undef GET_DS_CPP
+
+/* ------------------------------------------------------------------ */
+/* color_distance_sensor                                                */
+/* ------------------------------------------------------------------ */
+
+#define SELF_TYPE mp_obj_lpf2_color_distance_sensor_t
+#define GET_CDS_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::ColorDistanceSensor, SELF_TYPE>(self_in)
+
+DEVICE_DEL(color_distance_sensor, SELF_TYPE);
+
+static mp_obj_t lpf2_color_distance_sensor_get_color_idx(mp_obj_t self_in)
+{
+    return mp_obj_new_int((int)GET_CDS_CPP(self_in)->getColorIdx());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_color_idx_obj, lpf2_color_distance_sensor_get_color_idx);
+
+static mp_obj_t lpf2_color_distance_sensor_get_distance(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_CDS_CPP(self_in)->getDistance());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_distance_obj, lpf2_color_distance_sensor_get_distance);
+
+static mp_obj_t lpf2_color_distance_sensor_get_reflected_light(mp_obj_t self_in)
+{
+    return mp_obj_new_int(GET_CDS_CPP(self_in)->getReflectivity());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_reflected_light_obj, lpf2_color_distance_sensor_get_reflected_light);
+
+static mp_obj_t lpf2_color_distance_sensor_get_ambient_light(mp_obj_t self_in)
+{
+    return mp_obj_new_int(GET_CDS_CPP(self_in)->getAmbientLight());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_ambient_light_obj, lpf2_color_distance_sensor_get_ambient_light);
+
+static mp_obj_t lpf2_color_distance_sensor_get_rgb(mp_obj_t self_in)
+{
+    uint16_t r, g, b;
+    GET_CDS_CPP(self_in)->getRGB(r, g, b);
+    mp_obj_t tup = mp_obj_new_tuple(3, nullptr);
+    mp_obj_tuple_t *t = (mp_obj_tuple_t *)MP_OBJ_TO_PTR(tup);
+    t->items[0] = mp_obj_new_int(r);
+    t->items[1] = mp_obj_new_int(g);
+    t->items[2] = mp_obj_new_int(b);
+    return tup;
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_rgb_obj, lpf2_color_distance_sensor_get_rgb);
+
+static mp_obj_t lpf2_color_distance_sensor_set_ir_tx(mp_obj_t self_in, mp_obj_t value_in)
+{
+    GET_CDS_CPP(self_in)->setIrTx((uint16_t)mp_obj_get_uint(value_in));
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_color_distance_sensor_set_ir_tx_obj, lpf2_color_distance_sensor_set_ir_tx);
+
+static mp_obj_t lpf2_color_distance_sensor_set_led_color(mp_obj_t self_in, mp_obj_t color_in)
+{
+    GET_CDS_CPP(self_in)->setLedColor((Lpf2::ColorIDX)mp_obj_get_uint(color_in));
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_color_distance_sensor_set_led_color_obj, lpf2_color_distance_sensor_set_led_color);
+
+static mp_obj_t lpf2_color_distance_sensor_set_mode(size_t n_args, const mp_obj_t *args)
+{
+    uint8_t modeNum = (uint8_t)mp_obj_get_uint(args[1]);
+    float   delta   = n_args > 2 ? mp_obj_get_float(args[2]) : 1.0f;
+    GET_CDS_CPP(args[0])->setMode(modeNum, delta);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_color_distance_sensor_set_mode_obj, 2, 3, lpf2_color_distance_sensor_set_mode);
+
+static mp_obj_t lpf2_color_distance_sensor_get_device_type(mp_obj_t self_in)
+{
+    return mp_obj_new_int((int)GET_CDS_CPP(self_in)->getDeviceType());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_get_device_type_obj, lpf2_color_distance_sensor_get_device_type);
+
+static mp_obj_t lpf2_color_distance_sensor_name(mp_obj_t self_in)
+{
+    const char *n = GET_CDS_CPP(self_in)->name();
+    return mp_obj_new_str(n, strlen(n));
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_color_distance_sensor_name_obj, lpf2_color_distance_sensor_name);
+
+static const mp_rom_map_elem_t lpf2_color_distance_sensor_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),          MP_ROM_PTR(&lpf2_color_distance_sensor_del_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getColorIdx),      MP_ROM_PTR(&lpf2_color_distance_sensor_get_color_idx_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDistance),      MP_ROM_PTR(&lpf2_color_distance_sensor_get_distance_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getReflectedLight),MP_ROM_PTR(&lpf2_color_distance_sensor_get_reflected_light_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getAmbientLight),  MP_ROM_PTR(&lpf2_color_distance_sensor_get_ambient_light_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getRgb),           MP_ROM_PTR(&lpf2_color_distance_sensor_get_rgb_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setIrTx),          MP_ROM_PTR(&lpf2_color_distance_sensor_set_ir_tx_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setLedColor),      MP_ROM_PTR(&lpf2_color_distance_sensor_set_led_color_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setMode),          MP_ROM_PTR(&lpf2_color_distance_sensor_set_mode_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDeviceType),    MP_ROM_PTR(&lpf2_color_distance_sensor_get_device_type_obj)},
+    {MP_ROM_QSTR(MP_QSTR_name),             MP_ROM_PTR(&lpf2_color_distance_sensor_name_obj)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_COLOR),       MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_COLOR)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_DIST),        MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_DIST)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_REFLT),       MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_REFLT)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_AMBI),        MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_AMBI)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_LED),         MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_LED)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_RGB),         MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_RGB)},
+    {MP_ROM_QSTR(MP_QSTR_MODE_IR),          MP_ROM_INT(Lpf2::Devices::ColorDistanceSensor::MODE_IR)},
+};
+static MP_DEFINE_CONST_DICT(lpf2_color_distance_sensor_locals_dict, lpf2_color_distance_sensor_locals_table);
+
+MP_DEFINE_CONST_OBJ_TYPE(
+    lpf2_color_distance_sensor_type,
+    MP_QSTR_color_distance_sensor,
+    MP_TYPE_FLAG_NONE,
+    locals_dict, &lpf2_color_distance_sensor_locals_dict
+);
+
+#undef SELF_TYPE
+#undef GET_CDS_CPP
+
+/* ------------------------------------------------------------------ */
+/* hub_led                                                              */
+/* ------------------------------------------------------------------ */
+
+#define SELF_TYPE mp_obj_lpf2_hub_led_t
+#define GET_HL_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::HubLED, SELF_TYPE>(self_in)
+
+DEVICE_DEL(hub_led, SELF_TYPE);
+
+static mp_obj_t lpf2_hub_led_set_color_idx(mp_obj_t self_in, mp_obj_t color_in)
+{
+    GET_HL_CPP(self_in)->setColorIdx((Lpf2::ColorIDX)mp_obj_get_uint(color_in));
+    return mp_const_none;
+}
+static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_hub_led_set_color_idx_obj, lpf2_hub_led_set_color_idx);
+
+static mp_obj_t lpf2_hub_led_set_color(size_t n_args, const mp_obj_t *args)
+{
+    GET_HL_CPP(args[0])->setColor(
+        (uint8_t)mp_obj_get_uint(args[1]),
+        (uint8_t)mp_obj_get_uint(args[2]),
+        (uint8_t)mp_obj_get_uint(args[3]));
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(lpf2_hub_led_set_color_obj, 4, 4, lpf2_hub_led_set_color);
+
+static mp_obj_t lpf2_hub_led_get_device_type(mp_obj_t self_in)
+{
+    return mp_obj_new_int((int)GET_HL_CPP(self_in)->getDeviceType());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_hub_led_get_device_type_obj, lpf2_hub_led_get_device_type);
+
+static mp_obj_t lpf2_hub_led_name(mp_obj_t self_in)
+{
+    const char *n = GET_HL_CPP(self_in)->name();
+    return mp_obj_new_str(n, strlen(n));
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_hub_led_name_obj, lpf2_hub_led_name);
+
+static const mp_rom_map_elem_t lpf2_hub_led_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_hub_led_del_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setColorIdx),   MP_ROM_PTR(&lpf2_hub_led_set_color_idx_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setColor),      MP_ROM_PTR(&lpf2_hub_led_set_color_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_hub_led_get_device_type_obj)},
+    {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_hub_led_name_obj)},
+};
+static MP_DEFINE_CONST_DICT(lpf2_hub_led_locals_dict, lpf2_hub_led_locals_table);
+
+MP_DEFINE_CONST_OBJ_TYPE(
+    lpf2_hub_led_type,
+    MP_QSTR_hub_led,
+    MP_TYPE_FLAG_NONE,
+    locals_dict, &lpf2_hub_led_locals_dict
+);
+
+#undef SELF_TYPE
+#undef GET_HL_CPP
+
+/* ------------------------------------------------------------------ */
+/* accelerometer                                                        */
+/* ------------------------------------------------------------------ */
+
+#define SELF_TYPE mp_obj_lpf2_accelerometer_t
+#define GET_ACC_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::HubAccelerometer, SELF_TYPE>(self_in)
+
+DEVICE_DEL(accelerometer, SELF_TYPE);
+
+static mp_obj_t lpf2_accelerometer_get_x(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_ACC_CPP(self_in)->getX());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_accelerometer_get_x_obj, lpf2_accelerometer_get_x);
+
+static mp_obj_t lpf2_accelerometer_get_y(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_ACC_CPP(self_in)->getY());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_accelerometer_get_y_obj, lpf2_accelerometer_get_y);
+
+static mp_obj_t lpf2_accelerometer_get_z(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_ACC_CPP(self_in)->getZ());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_accelerometer_get_z_obj, lpf2_accelerometer_get_z);
+
+static mp_obj_t lpf2_accelerometer_get_device_type(mp_obj_t self_in)
+{
+    return mp_obj_new_int((int)GET_ACC_CPP(self_in)->getDeviceType());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_accelerometer_get_device_type_obj, lpf2_accelerometer_get_device_type);
+
+static mp_obj_t lpf2_accelerometer_name(mp_obj_t self_in)
+{
+    const char *n = GET_ACC_CPP(self_in)->name();
+    return mp_obj_new_str(n, strlen(n));
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_accelerometer_name_obj, lpf2_accelerometer_name);
+
+static const mp_rom_map_elem_t lpf2_accelerometer_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_accelerometer_del_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getX),          MP_ROM_PTR(&lpf2_accelerometer_get_x_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getY),          MP_ROM_PTR(&lpf2_accelerometer_get_y_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getZ),          MP_ROM_PTR(&lpf2_accelerometer_get_z_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_accelerometer_get_device_type_obj)},
+    {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_accelerometer_name_obj)},
+};
+static MP_DEFINE_CONST_DICT(lpf2_accelerometer_locals_dict, lpf2_accelerometer_locals_table);
+
+MP_DEFINE_CONST_OBJ_TYPE(
+    lpf2_accelerometer_type,
+    MP_QSTR_accelerometer,
+    MP_TYPE_FLAG_NONE,
+    locals_dict, &lpf2_accelerometer_locals_dict
+);
+
+#undef SELF_TYPE
+#undef GET_ACC_CPP
+
+/* ------------------------------------------------------------------ */
+/* gyroscope                                                            */
+/* ------------------------------------------------------------------ */
+
+#define SELF_TYPE mp_obj_lpf2_gyroscope_t
+#define GET_GYR_CPP(self_in) lpf2_device_get_cpp<Lpf2::Devices::HubGyroscope, SELF_TYPE>(self_in)
+
+DEVICE_DEL(gyroscope, SELF_TYPE);
+
+static mp_obj_t lpf2_gyroscope_get_x(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_GYR_CPP(self_in)->getX());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_gyroscope_get_x_obj, lpf2_gyroscope_get_x);
+
+static mp_obj_t lpf2_gyroscope_get_y(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_GYR_CPP(self_in)->getY());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_gyroscope_get_y_obj, lpf2_gyroscope_get_y);
+
+static mp_obj_t lpf2_gyroscope_get_z(mp_obj_t self_in)
+{
+    return mp_obj_new_float(GET_GYR_CPP(self_in)->getZ());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_gyroscope_get_z_obj, lpf2_gyroscope_get_z);
+
+static mp_obj_t lpf2_gyroscope_get_device_type(mp_obj_t self_in)
+{
+    return mp_obj_new_int((int)GET_GYR_CPP(self_in)->getDeviceType());
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_gyroscope_get_device_type_obj, lpf2_gyroscope_get_device_type);
+
+static mp_obj_t lpf2_gyroscope_name(mp_obj_t self_in)
+{
+    const char *n = GET_GYR_CPP(self_in)->name();
+    return mp_obj_new_str(n, strlen(n));
+}
+static MP_DEFINE_CONST_FUN_OBJ_1(lpf2_gyroscope_name_obj, lpf2_gyroscope_name);
+
+static const mp_rom_map_elem_t lpf2_gyroscope_locals_table[] = {
+    {MP_ROM_QSTR(MP_QSTR___del__),       MP_ROM_PTR(&lpf2_gyroscope_del_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getX),          MP_ROM_PTR(&lpf2_gyroscope_get_x_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getY),          MP_ROM_PTR(&lpf2_gyroscope_get_y_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getZ),          MP_ROM_PTR(&lpf2_gyroscope_get_z_obj)},
+    {MP_ROM_QSTR(MP_QSTR_getDeviceType), MP_ROM_PTR(&lpf2_gyroscope_get_device_type_obj)},
+    {MP_ROM_QSTR(MP_QSTR_name),          MP_ROM_PTR(&lpf2_gyroscope_name_obj)},
+};
+static MP_DEFINE_CONST_DICT(lpf2_gyroscope_locals_dict, lpf2_gyroscope_locals_table);
+
+MP_DEFINE_CONST_OBJ_TYPE(
+    lpf2_gyroscope_type,
+    MP_QSTR_gyroscope,
+    MP_TYPE_FLAG_NONE,
+    locals_dict, &lpf2_gyroscope_locals_dict
+);
+
+#undef SELF_TYPE
+#undef GET_GYR_CPP
 
 /* ------------------------------------------------------------------ */
 /* port_expander_dev (hardware)                                         */

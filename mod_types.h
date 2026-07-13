@@ -40,12 +40,53 @@ static inline mp_obj_t lpf2_cast_to_native_base(mp_obj_t obj, const mp_obj_type_
 #include "Lpf2/LWPConst.hpp"
 #include "Lpf2/Virtual/Port.hpp"
 #include "Lpf2/Virtual/Device.hpp"
+#include "Lpf2/Remote/Port.hpp"
+#include "Lpf2/Hub.hpp"
 #include "Lpf2/HubEmulation.hpp"
 #include "Lpf2/DeviceManager.hpp"
+#include <vector>
+#include <algorithm>
+
+// Registry of live, Python-created C++ objects that need periodic update().
+// One vector per base type T. Central lpf2_update_all() iterates each.
+// Built-in local ports (constructed C++-side, e.g. hub.ports.A) are NOT
+// registered — they're pumped by Ports::update() in hub_main.cpp.
+template <typename T>
+inline std::vector<T *> &lpf2_reg()
+{
+    static std::vector<T *> v;
+    return v;
+}
+
+template <typename T>
+inline void lpf2_reg_add(T *p)
+{
+    if (p) lpf2_reg<T>().push_back(p);
+}
+
+template <typename T>
+inline void lpf2_reg_remove(T *p)
+{
+    auto &v = lpf2_reg<T>();
+    v.erase(std::remove(v.begin(), v.end(), p), v.end());
+}
+
+template <typename T>
+inline void lpf2_reg_update_all()
+{
+    for (auto *p : lpf2_reg<T>()) if (p) p->update();
+}
+
+extern "C" void lpf2_update_all(void);
+
 #include "Lpf2/Devices/BasicMotor.hpp"
 #include "Lpf2/Devices/EncoderMotor.hpp"
 #include "Lpf2/Devices/ColorSensor.hpp"
 #include "Lpf2/Devices/DistanceSensor.hpp"
+#include "Lpf2/Devices/ColorDistanceSensor.hpp"
+#include "Lpf2/Devices/HubLED.hpp"
+#include "Lpf2/Devices/Accelerometer.hpp"
+#include "Lpf2/Devices/Gyroscope.hpp"
 #if LPF2_HAS_PORT_EXPANDER
 #include "Lpf2/PortExpander/Device.hpp"
 #include "Lpf2/PortExpander/VirtualDevice.hpp"
@@ -114,6 +155,15 @@ typedef struct _mp_obj_lpf2_port_t
 } mp_obj_lpf2_port_t;
 extern const mp_obj_type_t lpf2_port_type;
 extern const mp_obj_type_t lpf2_local_port_type;
+
+typedef struct _mp_obj_lpf2_hub_t
+{
+    mp_obj_base_t base;
+    Lpf2::Hub *cpp_obj = nullptr;
+    bool owned = false;
+    mp_obj_t port_cache; // dict PortNum(int) -> port wrapper; identity + GC anchor
+} mp_obj_lpf2_hub_t;
+extern const mp_obj_type_t lpf2_hub_type;
 
 typedef struct _mp_obj_lpf2_virtual_port_t
 {
@@ -199,6 +249,30 @@ typedef struct {
     uint32_t gen;
     mp_obj_t port_ref;
 } mp_obj_lpf2_distance_sensor_t;
+typedef struct {
+    mp_obj_base_t base;
+    std::shared_ptr<Lpf2::DeviceSlot> *slot;
+    uint32_t gen;
+    mp_obj_t port_ref;
+} mp_obj_lpf2_color_distance_sensor_t;
+typedef struct {
+    mp_obj_base_t base;
+    std::shared_ptr<Lpf2::DeviceSlot> *slot;
+    uint32_t gen;
+    mp_obj_t port_ref;
+} mp_obj_lpf2_hub_led_t;
+typedef struct {
+    mp_obj_base_t base;
+    std::shared_ptr<Lpf2::DeviceSlot> *slot;
+    uint32_t gen;
+    mp_obj_t port_ref;
+} mp_obj_lpf2_accelerometer_t;
+typedef struct {
+    mp_obj_base_t base;
+    std::shared_ptr<Lpf2::DeviceSlot> *slot;
+    uint32_t gen;
+    mp_obj_t port_ref;
+} mp_obj_lpf2_gyroscope_t;
 #if LPF2_HAS_PORT_EXPANDER
 typedef struct {
     mp_obj_base_t base;
@@ -211,6 +285,10 @@ extern const mp_obj_type_t lpf2_basic_motor_type;
 extern const mp_obj_type_t lpf2_encoder_motor_type;
 extern const mp_obj_type_t lpf2_color_sensor_type;
 extern const mp_obj_type_t lpf2_distance_sensor_type;
+extern const mp_obj_type_t lpf2_color_distance_sensor_type;
+extern const mp_obj_type_t lpf2_hub_led_type;
+extern const mp_obj_type_t lpf2_accelerometer_type;
+extern const mp_obj_type_t lpf2_gyroscope_type;
 #if LPF2_HAS_PORT_EXPANDER
 extern const mp_obj_type_t lpf2_port_expander_type;
 #endif
@@ -261,6 +339,7 @@ extern const mp_obj_fun_builtin_fixed_t lpf2_devices_register_default_obj;
 
 LPF2_MOD_EXTERN(color);
 LPF2_MOD_EXTERN(hub_type);
+LPF2_MOD_EXTERN(hub_property);
 LPF2_MOD_EXTERN(device_type);
 LPF2_MOD_EXTERN(battery_type);
 LPF2_MOD_EXTERN(alerts);

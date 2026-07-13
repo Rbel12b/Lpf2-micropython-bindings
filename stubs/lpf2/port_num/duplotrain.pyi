@@ -1,6 +1,6 @@
-MOTOR: int
-LED: int
-SPEAKER: int
-COLOR: int
-SPEEDOMETER: int
-VOLTAGE: int
+MOTOR: int = 0x00
+LED: int = 0x11
+SPEAKER: int = 0x01
+COLOR: int = 0x12
+SPEEDOMETER: int = 0x13
+VOLTAGE: int = 0x14

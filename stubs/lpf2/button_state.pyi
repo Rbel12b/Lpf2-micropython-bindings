@@ -1,5 +1,5 @@
-PRESSED: int
-RELEASED: int
-UP: int
-DOWN: int
-STOP: int
+PRESSED: int = 0x01
+RELEASED: int = 0x00
+UP: int = 0x01
+DOWN: int = 0xff
+STOP: int = 0x7f

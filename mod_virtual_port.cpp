@@ -20,6 +20,7 @@ static mp_obj_t lpf2_virtual_port_make_new(const mp_obj_type_t *type,
     o->cpp_obj = new Lpf2::Virtual::Port();
     o->owned = true;
     o->device_ref = MP_OBJ_NULL;
+    lpf2_reg_add<Lpf2::Port>(o->cpp_obj);
 
     return MP_OBJ_FROM_PTR(o);
 }
@@ -30,6 +31,7 @@ DEFINE_VPORT_METHOD(del, (mp_obj_t self_in)
     LPF2_LOG_V("Deleting Virtual Port, owner: %s", self->owned ? "true" : "false");
     if (self->owned && self->cpp_obj)
     {
+        lpf2_reg_remove<Lpf2::Port>(self->cpp_obj);
         delete self->cpp_obj;
         self->cpp_obj = nullptr;
     }

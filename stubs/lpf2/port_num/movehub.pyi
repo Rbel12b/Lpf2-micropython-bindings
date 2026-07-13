@@ -1,9 +1,9 @@
-A: int
-B: int
-AB: int
-C: int
-D: int
-LED: int
-TILT: int
-CURRENT: int
-VOLTAGE: int
+A: int = 0x00
+B: int = 0x01
+AB: int = 0x10
+C: int = 0x02
+D: int = 0x03
+LED: int = 0x32
+TILT: int = 0x3A
+CURRENT: int = 0x3B
+VOLTAGE: int = 0x3C

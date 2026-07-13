@@ -40,12 +40,24 @@ static mp_obj_t lpf2_port_make_device_obj(mp_obj_t port_obj_in, Lpf2::Port *port
     if (dev->hasCapability(Lpf2::Devices::BasicMotor::CAP))
         return lpf2_make_device_wrapper<mp_obj_lpf2_basic_motor_t>(
             port_obj_in, &lpf2_basic_motor_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::ColorDistanceSensor::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_color_distance_sensor_t>(
+            port_obj_in, &lpf2_color_distance_sensor_type, handle, gen);
     if (dev->hasCapability(Lpf2::Devices::TechnicColorSensor::CAP))
         return lpf2_make_device_wrapper<mp_obj_lpf2_color_sensor_t>(
             port_obj_in, &lpf2_color_sensor_type, handle, gen);
     if (dev->hasCapability(Lpf2::Devices::TechnicDistanceSensor::CAP))
         return lpf2_make_device_wrapper<mp_obj_lpf2_distance_sensor_t>(
             port_obj_in, &lpf2_distance_sensor_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::HubLED::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_hub_led_t>(
+            port_obj_in, &lpf2_hub_led_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::HubAccelerometer::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_accelerometer_t>(
+            port_obj_in, &lpf2_accelerometer_type, handle, gen);
+    if (dev->hasCapability(Lpf2::Devices::HubGyroscope::CAP))
+        return lpf2_make_device_wrapper<mp_obj_lpf2_gyroscope_t>(
+            port_obj_in, &lpf2_gyroscope_type, handle, gen);
 #if LPF2_HAS_PORT_EXPANDER
     if (dev->hasCapability(Lpf2::Devices::PortExpander::CAP))
         return lpf2_make_device_wrapper<mp_obj_lpf2_port_expander_dev_t>(
@@ -68,6 +80,7 @@ static mp_obj_t lpf2_port_make_new(const mp_obj_type_t *type,
     o->is_trampoline = true;
     o->owned = true;
     o->parent_ref = MP_OBJ_NULL;
+    lpf2_reg_add<Lpf2::Port>(o->cpp_obj);
 
     return MP_OBJ_FROM_PTR(o);
 }
@@ -361,6 +374,7 @@ DEFINE_PORT_METHOD(del, (mp_obj_t self_in)
     LPF2_LOG_V("Deleting Port, owner: %s", self->owned ? "true" : "false");
     if (self->owned && self->cpp_obj)
     {
+        lpf2_reg_remove<Lpf2::Port>(self->cpp_obj);
         delete self->cpp_obj;
         self->cpp_obj = nullptr;
     }

@@ -1,13 +1,13 @@
-A: int
-B: int
-C: int
-D: int
-LED: int
-CURRENT: int
-VOLTAGE: int
-TEMP: int
-TEMP2: int
-ACCELEROMETER: int
-GYRO: int
-TILT: int
-GESTURE: int
+A: int = 0x00
+B: int = 0x01
+C: int = 0x02
+D: int = 0x03
+LED: int = 0x32
+CURRENT: int = 0x3B
+VOLTAGE: int = 0x3C
+TEMP: int = 0x3D
+TEMP2: int = 0x60
+ACCELEROMETER: int = 0x61
+GYRO: int = 0x62
+TILT: int = 0x63
+GESTURE: int = 0x64
