@@ -103,6 +103,8 @@ class port:
         devices.distance_sensor,
         devices.port_expander,
         devices.hub_led,
+        devices.accelerometer,
+        devices.gyroscope,
         None,
     ]: ...
     def writeData(self, mode: int, buf: bytes) -> int: ...
