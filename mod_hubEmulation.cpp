@@ -20,7 +20,7 @@ static mp_obj_t lpf2_hub_emulation_make_new(const mp_obj_type_t *type,
     SELF_TYPE *o = (SELF_TYPE*)m_malloc_with_finaliser(sizeof(SELF_TYPE));
     o->base.type = type;
 
-    o->cpp_obj = new Lpf2::HubEmulation("Technic Hub", Lpf2::HubType::CONTROL_PLUS_HUB);
+    o->cpp_obj = new Lpf2::HubEmulation("Technic Hub", Lpf2::HubType::CONTROL_PLUS_HUB, /*ownsBleStack=*/false);
     o->owned = true;
     o->attached_ports = mp_obj_new_list(0, NULL);
 
