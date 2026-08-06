@@ -213,7 +213,23 @@ class port:
     def update(self) -> None:
         """Poll the port: run one tick of the underlying transport, then
         resolve the attached device via the device factory. Call from a
-        loop."""
+        loop. No-op while the port is disabled (see :meth:`disable`)."""
+        ...
+    def disable(self, disable: bool = True) -> None:
+        """Enable/disable port polling.
+
+        When disabled, :meth:`update` returns immediately without polling
+        the transport or forwarding to the attached device. Use to pause
+        a port temporarily (e.g. while another task drives the same
+        hardware) without tearing down the device wrapper. Call
+        ``disable(False)`` to resume.
+
+        Subclasses may release/reacquire transport resources on the
+        transition via the C++ ``_onDisable`` hook (e.g. deinit UART).
+        """
+        ...
+    def isDisabled(self) -> bool:
+        """True if the port is currently disabled."""
         ...
     def device(self) -> Union[
         devices.basic_motor,

@@ -264,6 +264,21 @@ DEFINE_PORT_METHOD_VAR_BETWEEN(set_mode_combo,
 },
 2, 3);
 
+DEFINE_PORT_METHOD_VAR_BETWEEN(disable,
+{
+    void *self_in = MP_OBJ_TO_PTR(args[0]);
+    bool d = n_args > 1 ? mp_obj_is_true(args[1]) : true;
+    GET_SELF_CPP()->disable(d);
+    return mp_const_none;
+},
+1, 2);
+
+DEFINE_PORT_METHOD(is_disabled, (mp_obj_t self_in)
+{
+    return mp_obj_new_bool(GET_SELF_CPP()->isDisabled());
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
 DEFINE_PORT_METHOD(is_device_connected, (mp_obj_t self_in)
 {
     return mp_obj_new_bool(GET_SELF_CPP()->isDeviceConnected());
@@ -400,6 +415,8 @@ static const mp_rom_map_elem_t lpf2_port_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR_setRgbColor), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(set_rgb_color))},
     {MP_ROM_QSTR(MP_QSTR_setMode), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(set_mode))},
     {MP_ROM_QSTR(MP_QSTR_setModeCombo), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(set_mode_combo))},
+    {MP_ROM_QSTR(MP_QSTR_disable), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(disable))},
+    {MP_ROM_QSTR(MP_QSTR_isDisabled), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(is_disabled))},
     {MP_ROM_QSTR(MP_QSTR_isDeviceConnected), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(is_device_connected))},
     {MP_ROM_QSTR(MP_QSTR_getValue), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_value))},
     {MP_ROM_QSTR(MP_QSTR_getValueStr), MP_ROM_PTR(&LPF2_GET_PORT_METHOD_OBJ(get_value_str))},
