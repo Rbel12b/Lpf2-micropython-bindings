@@ -202,9 +202,11 @@ class port:
     """Base LPF2 port.
 
     Base class for :class:`lpf2.local.port`, :class:`lpf2.virtual.port`
-    and remote ports. Wraps the C++ ``Lpf2::Port``. Callers typically
-    use :meth:`update` from a loop, then read state via
-    :meth:`isDeviceConnected` / :meth:`device` / :meth:`getValue`.
+    and remote ports. Wraps the C++ ``Lpf2::Port``. Every port
+    registers itself with the firmware's update registry at
+    construction, so :meth:`update` is polled automatically each
+    tick — callers just read state via :meth:`isDeviceConnected` /
+    :meth:`device` / :meth:`getValue`.
     """
 
     def init(self) -> None:
@@ -212,8 +214,12 @@ class port:
         ...
     def update(self) -> None:
         """Poll the port: run one tick of the underlying transport, then
-        resolve the attached device via the device factory. Call from a
-        loop. No-op while the port is disabled (see :meth:`disable`)."""
+        resolve the attached device via the device factory.
+
+        The C firmware calls this every tick for every port, so user
+        code does not need to call it. Calling it manually just runs
+        an extra poll early. No-op while the port is disabled (see
+        :meth:`disable`)."""
         ...
     def disable(self, disable: bool = True) -> None:
         """Enable/disable port polling.
@@ -363,8 +369,10 @@ class hub:
     """BLE client for a remote LEGO PoweredUp / Control+ hub.
 
     Manages the NimBLE scan/connect state, mirrors the remote hub's
-    ports as :class:`port` objects, and exposes hub properties. Call
-    :meth:`update` from a loop.
+    ports as :class:`port` objects, and exposes hub properties.
+    Registers itself with the firmware's update registry at
+    construction, so :meth:`update` runs each tick automatically —
+    scripts just wait on :meth:`isConnected` / :meth:`infoReady`.
     """
 
     def __init__(self) -> None: ...
@@ -378,7 +386,11 @@ class hub:
         """
         ...
     def update(self) -> None:
-        """Pump BLE state (scan/connect/message handling). Call from a loop."""
+        """Pump BLE state (scan/connect/message handling).
+
+        Auto-called each tick from the firmware update registry, so
+        user code does not need to call it. Calling it manually just
+        runs an extra pump early."""
         ...
     def connectHub(self) -> bool:
         """Attempt to connect to the discovered hub. Returns True on success."""

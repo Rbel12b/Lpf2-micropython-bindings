@@ -35,6 +35,10 @@ class device:
     implementation, so it is safe to call ``super().startPower(pw)``
     from a subclass — recursion into Python is prevented on the C++
     side.
+
+    Registers itself with the firmware's update registry at
+    construction, so any C++ ``update()`` behaviour runs each tick
+    automatically. Python code does not need to poll the device.
     """
 
     def setModeData(self, mode: int, buf: bytes) -> None:
