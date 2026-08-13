@@ -78,3 +78,9 @@ TECHNIC_MEDIUM_ANGULAR_MOTOR_GREY: int = 75
 """Technic grey medium angular motor."""
 TECHNIC_LARGE_ANGULAR_MOTOR_GREY: int = 76
 """Technic grey large angular motor."""
+EV3_MEDIUM_MOTOR: int = 100
+"""Mindstorms EV3 medium motor. No official LPF2 ID; assigned locally
+for use with :meth:`lpf2.local.port.forceDeviceType` (drives raw PWM)."""
+EV3_LARGE_MOTOR: int = 101
+"""Mindstorms EV3 large motor. No official LPF2 ID; assigned locally
+for use with :meth:`lpf2.local.port.forceDeviceType` (drives raw PWM)."""

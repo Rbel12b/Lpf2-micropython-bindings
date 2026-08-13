@@ -234,6 +234,9 @@ class port:
         transition via the C++ ``_onDisable`` hook (e.g. deinit UART).
         """
         ...
+    def enable(self) -> None:
+        """Re-enable a previously disabled port. Equivalent to ``disable(False)``."""
+        ...
     def isDisabled(self) -> bool:
         """True if the port is currently disabled."""
         ...

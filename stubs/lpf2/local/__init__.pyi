@@ -14,6 +14,19 @@ class port(_port):
     Same public API as :class:`lpf2.port`; explicit subclass so
     isinstance checks distinguish local from virtual / remote ports.
     """
+    def forceDeviceType(self, type: int) -> None:
+        """Disable the port and force it to report device type ``type``
+        (see :mod:`lpf2.device_type`).
+
+        Used to drive devices that do not go through the LPF2 handshake
+        (e.g. EV3 motors via :data:`lpf2.device_type.EV3_MEDIUM_MOTOR` /
+        :data:`~lpf2.device_type.EV3_LARGE_MOTOR`). The port stops its
+        UART/analog polling, but ``setPower`` / ``startPower`` still
+        drive the PWM output pins directly.
+
+        Call :meth:`enable` to resume normal detection.
+        """
+        ...
     def writeData(self, mode: int, buf: bytes) -> int:
         """Send raw payload to device on given mode. Returns error code (0 = ok)."""
         ...
