@@ -26,7 +26,7 @@ DEFINE_HUB_METHOD_VAR_BETWEEN(init,
 {
     auto self = (SELF_TYPE *)MP_OBJ_TO_PTR(args[0]);
     if (n_args == 1) {
-        self->cpp_obj->init();
+        self->cpp_obj->init(10000); // default scan duration 10 seconds
     } else if (n_args == 2) {
         if (mp_obj_is_str(args[1])) {
             size_t len;
