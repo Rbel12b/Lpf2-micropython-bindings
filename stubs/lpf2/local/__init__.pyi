@@ -6,6 +6,7 @@ Instances live in C++, exposed via board module (e.g. ``hub.ports.A``).
 
 from lpf2 import port as _port
 from lpf2 import mode
+from lpf2.virtual import device as _virtual_device
 from typing import Optional, Sequence
 
 class port(_port):
@@ -119,4 +120,64 @@ class port(_port):
         ...
     def rawToSpeed(self, raw: int) -> int:
         """Convert LPF2 raw byte to signed -100..100 speed."""
+        ...
+
+
+class emulated_port:
+    """LPF2 slave port: emulates a device on a physical hub UART socket.
+
+    Takes ownership of a hardware :class:`port` (calls ``disable`` on it)
+    and drives its UART as an LPF2 slave. The connected host sees whatever
+    :class:`~lpf2.virtual.device` is attached — typically a
+    :class:`lpf2.port_expander.virtual_port_expander_device` to expose
+    multiple sub-ports.
+
+    The firmware update loop pumps the emulated port automatically; no
+    explicit ``update()`` call is required in normal user code.
+    """
+
+    def __init__(self, port: port) -> None:
+        """Bind to ``port``.
+
+        ``port`` must be a hardware :class:`port` (e.g. ``hub.ports.F``).
+        Its UART scanning is disabled immediately; call ``port.enable()``
+        to restore normal operation after the emulated port is deleted.
+        """
+        ...
+
+    def init(self) -> None:
+        """Initialise the UART and begin the host-detection handshake.
+
+        Call once after :meth:`attachDevice`. The port holds TX low
+        (break condition) until the host sends ``CMD_SPEED``, then
+        enumerates the attached device.
+        """
+        ...
+
+    def update(self) -> None:
+        """Pump the protocol state machine manually.
+
+        Not needed when the emulated port is registered with the firmware
+        update loop (the default). Call only if you need fine-grained
+        control over update timing.
+        """
+        ...
+
+    def isHostConnected(self) -> bool:
+        """True once the host has completed the info handshake and is
+        sending data-phase messages."""
+        ...
+
+    def attachDevice(self, device: _virtual_device) -> None:
+        """Attach ``device`` as the emulated device on this port.
+
+        Accepts :class:`lpf2.virtual.device` or
+        :class:`lpf2.port_expander.virtual_port_expander_device`.
+        The device is removed from the firmware's auto-update registry
+        while attached; :meth:`update` drives it instead.
+        """
+        ...
+
+    def detachDevice(self) -> None:
+        """Detach the current device and return it to the auto-update registry."""
         ...
