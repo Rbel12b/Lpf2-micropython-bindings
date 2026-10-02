@@ -149,8 +149,10 @@ class emulated_port:
         """Initialise the UART and begin the host-detection handshake.
 
         Call once after :meth:`attachDevice`. The port holds TX low
-        (break condition) until the host sends ``CMD_SPEED``, then
-        enumerates the attached device.
+        (break condition) at **115200 baud** and waits indefinitely for
+        the host to send ``CMD_SPEED``, then enumerates the attached device.
+        In slow-enumeration mode (see :meth:`setSlowEnumeration`) the port
+        uses 2400 baud and skips the wait.
         """
         ...
 
@@ -166,6 +168,19 @@ class emulated_port:
     def isHostConnected(self) -> bool:
         """True once the host has completed the info handshake and is
         sending data-phase messages."""
+        ...
+
+    def setSlowEnumeration(self, slow: bool) -> None:
+        """Select slow (EV3 / 2400 baud) or fast (LPF2 / 115200 baud) enumeration.
+
+        Must be called before :meth:`init`.  Default is ``False`` (115200,
+        waits indefinitely for ``CMD_SPEED``).  Pass ``True`` to skip the
+        LPF2 handshake and go directly to 2400 baud EV3 mode.
+        """
+        ...
+
+    def isSlowEnumeration(self) -> bool:
+        """True if slow-enumeration (2400 baud / EV3) mode is active."""
         ...
 
     def attachDevice(self, device: _virtual_device) -> None:

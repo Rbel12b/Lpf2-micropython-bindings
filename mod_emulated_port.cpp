@@ -103,6 +103,19 @@ static mp_obj_t lpf2_emulated_port_attach_device(mp_obj_t self_in, mp_obj_t devi
 }
 static MP_DEFINE_CONST_FUN_OBJ_2(lpf2_emulated_port_attach_device_obj, lpf2_emulated_port_attach_device);
 
+DEFINE_EMU_PORT_METHOD(set_slow_enumeration, (mp_obj_t self_in, mp_obj_t slow_in)
+{
+    GET_SELF_CPP()->setSlowEnumeration(mp_obj_is_true(slow_in));
+    return mp_const_none;
+},
+MP_DEFINE_CONST_FUN_OBJ_2);
+
+DEFINE_EMU_PORT_METHOD(is_slow_enumeration, (mp_obj_t self_in)
+{
+    return mp_obj_new_bool(GET_SELF_CPP()->isSlowEnumeration());
+},
+MP_DEFINE_CONST_FUN_OBJ_1);
+
 static mp_obj_t lpf2_emulated_port_detach_device(mp_obj_t self_in)
 {
     auto self = (SELF_TYPE *)MP_OBJ_TO_PTR(self_in);
@@ -124,8 +137,10 @@ static const mp_rom_map_elem_t lpf2_emulated_port_locals_table[] = {
     {MP_ROM_QSTR(MP_QSTR_init),            MP_ROM_PTR(&GET_EMU_PORT_METHOD_OBJ(init))},
     {MP_ROM_QSTR(MP_QSTR_update),          MP_ROM_PTR(&GET_EMU_PORT_METHOD_OBJ(update))},
     {MP_ROM_QSTR(MP_QSTR_isHostConnected), MP_ROM_PTR(&GET_EMU_PORT_METHOD_OBJ(is_host_connected))},
-    {MP_ROM_QSTR(MP_QSTR_attachDevice),    MP_ROM_PTR(&lpf2_emulated_port_attach_device_obj)},
-    {MP_ROM_QSTR(MP_QSTR_detachDevice),    MP_ROM_PTR(&lpf2_emulated_port_detach_device_obj)},
+    {MP_ROM_QSTR(MP_QSTR_attachDevice),       MP_ROM_PTR(&lpf2_emulated_port_attach_device_obj)},
+    {MP_ROM_QSTR(MP_QSTR_detachDevice),       MP_ROM_PTR(&lpf2_emulated_port_detach_device_obj)},
+    {MP_ROM_QSTR(MP_QSTR_setSlowEnumeration), MP_ROM_PTR(&GET_EMU_PORT_METHOD_OBJ(set_slow_enumeration))},
+    {MP_ROM_QSTR(MP_QSTR_isSlowEnumeration),  MP_ROM_PTR(&GET_EMU_PORT_METHOD_OBJ(is_slow_enumeration))},
 };
 
 static MP_DEFINE_CONST_DICT(lpf2_emulated_port_locals_dict, lpf2_emulated_port_locals_table);
