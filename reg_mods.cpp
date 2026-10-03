@@ -10,11 +10,13 @@ extern "C" void lpf2_update_all(void)
     lpf2_reg_update_all<Lpf2::Hub>();
     lpf2_reg_update_all<Lpf2::Port>();
     lpf2_reg_update_all<Lpf2::Virtual::Device>();
+    lpf2_reg_update_all<Lpf2::Local::EmulatedPort>();
 }
 
 /* --- lpf2.local --- */
 LPF2_DEFINE_MOD_WITH_GLOB(local,
-    { MP_ROM_QSTR(MP_QSTR_port), MP_ROM_PTR(&lpf2_local_port_type) }
+    { MP_ROM_QSTR(MP_QSTR_port),          MP_ROM_PTR(&lpf2_local_port_type) },
+    { MP_ROM_QSTR(MP_QSTR_emulated_port), MP_ROM_PTR(&lpf2_emulated_port_type) }
 );
 
 /* --- lpf2.virtual --- */

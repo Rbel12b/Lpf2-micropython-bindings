@@ -5,7 +5,7 @@ from lpf2 import port as _port
 from lpf2.port_expander import port_num as port_num
 from lpf2.virtual import device as _virtual_device
 
-class virtual_device(_virtual_device):
+class virtual_port_expander_device(_virtual_device):
     """Emulated port-expander device (server side).
 
     Aggregates up to four attached :class:`lpf2.port` objects and

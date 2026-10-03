@@ -37,6 +37,7 @@ static inline mp_obj_t lpf2_cast_to_native_base(mp_obj_t obj, const mp_obj_type_
 
 #include "Lpf2/Port.hpp"
 #include "Lpf2/Local/Port.hpp"
+#include "Lpf2/Local/EmulatedPort.hpp"
 #include "Lpf2/LWPConst.hpp"
 #include "Lpf2/Virtual/Port.hpp"
 #include "Lpf2/Virtual/Device.hpp"
@@ -59,14 +60,36 @@ inline std::vector<T *> &lpf2_reg()
 }
 
 template <typename T>
+inline Lpf2::Utils::Mutex &lpf2_reg_mutex()
+{
+#ifdef LPF2_MUTEX_INVALID
+    static Lpf2::Utils::Mutex m = LPF2_MUTEX_INVALID;
+#else
+    static Lpf2::Utils::Mutex m;
+#endif
+    return m;
+}
+
+template <typename T>
 inline void lpf2_reg_add(T *p)
 {
-    if (p) lpf2_reg<T>().push_back(p);
+    if (!p) return;
+#ifdef LPF2_MUTEX_INVALID
+    auto &m = lpf2_reg_mutex<T>();
+    if (m == LPF2_MUTEX_INVALID)
+        m = LPF2_MUTEX_CREATE();
+#endif
+    Lpf2::Utils::MutexLock lock(lpf2_reg_mutex<T>());
+    lpf2_reg<T>().push_back(p);
 }
 
 template <typename T>
 inline void lpf2_reg_remove(T *p)
 {
+#ifdef LPF2_MUTEX_INVALID
+    if (lpf2_reg_mutex<T>() == LPF2_MUTEX_INVALID) return;
+#endif
+    Lpf2::Utils::MutexLock lock(lpf2_reg_mutex<T>());
     auto &v = lpf2_reg<T>();
     v.erase(std::remove(v.begin(), v.end(), p), v.end());
 }
@@ -74,6 +97,10 @@ inline void lpf2_reg_remove(T *p)
 template <typename T>
 inline void lpf2_reg_update_all()
 {
+#ifdef LPF2_MUTEX_INVALID
+    if (lpf2_reg_mutex<T>() == LPF2_MUTEX_INVALID) return;
+#endif
+    Lpf2::Utils::MutexLock lock(lpf2_reg_mutex<T>());
     for (auto *p : lpf2_reg<T>()) if (p) p->update();
 }
 
@@ -220,6 +247,16 @@ typedef struct _mp_obj_lpf2_hub_emulation_t
     mp_obj_t attached_ports; // Python list keeping attached port objects alive for GC
 } mp_obj_lpf2_hub_emulation_t;
 extern const mp_obj_type_t lpf2_hub_emulation_type;
+
+typedef struct _mp_obj_lpf2_emulated_port_t
+{
+    mp_obj_base_t base;
+    Lpf2::Local::EmulatedPort *cpp_obj = nullptr;
+    bool owned = false;
+    mp_obj_t port_ref;   // keeps the Local::Port alive (its UART is in use)
+    mp_obj_t device_ref; // keeps the attached virtual device alive
+} mp_obj_lpf2_emulated_port_t;
+extern const mp_obj_type_t lpf2_emulated_port_type;
 
 typedef struct {
     mp_obj_base_t base;
